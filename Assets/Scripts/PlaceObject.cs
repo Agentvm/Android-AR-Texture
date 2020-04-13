@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlaceObject : MonoBehaviour
 {
     [SerializeField] private Object[] objectsToInstantiate;
+    private List<GameObject> preloadedObjects = new List<GameObject> ();
     private Camera mainCamera;
 
     // Start is called before the first frame update
@@ -14,11 +15,9 @@ public class PlaceObject : MonoBehaviour
         mainCamera = Camera.main;
 
         // quickly load and then destroy the prefab so the screen dows not freeze on first placement
-        foreach (Object objectInList in objectsToInstantiate)
+        foreach (Object objectToInstantiate in objectsToInstantiate)
         {
-            GameObject preloadObject = (GameObject)Instantiate (objectInList, new Vector3 (0f, -20f, -20f), new Quaternion (), this.transform );
-            Destroy (preloadObject);
-            preloadObject = new GameObject (); // make sure the Garbage is collected
+            preloadedObjects.Add ((GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, 0f, 20f), new Quaternion (), this.transform ));
         }
         
     }
@@ -26,7 +25,17 @@ public class PlaceObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (Time.time > 0.5f)
+        {
+            for( int i = 0; i < preloadedObjects.Count; i++ )
+            {
+                Destroy (preloadedObjects[i]);
+
+                // make sure the Garbage is collected by overwriting the object
+                preloadedObjects[i] = new GameObject ();
+                Destroy (preloadedObjects[i]);
+            }
+        }
     }
 
     // Make a new Instance of the object assigned in the Inspector, place it at the given position and rotate it towards the camera
