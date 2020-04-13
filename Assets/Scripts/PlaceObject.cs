@@ -12,6 +12,11 @@ public class PlaceObject : MonoBehaviour
     {
         InputModule.Instance.SubscribeFunctionToPlaneTouch (Place);
         mainCamera = Camera.main;
+
+        // quickly load and then destroy the prefab so the screen dows not freeze on first placement
+        GameObject preloadObject = (GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, -20f, -20f), new Quaternion (), this.transform );
+        Destroy (preloadObject);
+        preloadObject = new GameObject (); // make sure the Garbage is collected
     }
 
     // Update is called once per frame
