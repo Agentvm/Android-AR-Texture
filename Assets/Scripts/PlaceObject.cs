@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlaceObject : MonoBehaviour
 {
-    [SerializeField] private Object objectToInstantiate;
+    [SerializeField] private Object[] objectsToInstantiate;
     private Camera mainCamera;
 
     // Start is called before the first frame update
@@ -14,9 +14,13 @@ public class PlaceObject : MonoBehaviour
         mainCamera = Camera.main;
 
         // quickly load and then destroy the prefab so the screen dows not freeze on first placement
-        GameObject preloadObject = (GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, -20f, -20f), new Quaternion (), this.transform );
-        Destroy (preloadObject);
-        preloadObject = new GameObject (); // make sure the Garbage is collected
+        foreach (Object objectInList in objectsToInstantiate)
+        {
+            GameObject preloadObject = (GameObject)Instantiate (objectInList, new Vector3 (0f, -20f, -20f), new Quaternion (), this.transform );
+            Destroy (preloadObject);
+            preloadObject = new GameObject (); // make sure the Garbage is collected
+        }
+        
     }
 
     // Update is called once per frame
@@ -29,7 +33,9 @@ public class PlaceObject : MonoBehaviour
     void Place (Vector3 position)
     {
         // instantiate
-        if ( !objectToInstantiate ) return;
+        if ( objectsToInstantiate.Length == 0 ) return;
+        Object objectToInstantiate = objectsToInstantiate[Random.Range (0, objectsToInstantiate.Length)];
+
         Transform instantiatedObject = ((GameObject)Instantiate (objectToInstantiate, position, new Quaternion (), this.transform )).transform;
 
         // rotate towards camera
