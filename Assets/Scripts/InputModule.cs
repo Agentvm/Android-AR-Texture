@@ -10,7 +10,7 @@ public class InputModule : MonoBehaviour
 
     // Delegates for Touch Events
     public delegate void PlaneTouchDelegate (Vector3 position );
-    public List<PlaneTouchDelegate> functionsOnPlaneTouch = new List<PlaneTouchDelegate> ();
+    private List<PlaneTouchDelegate> functionsOnPlaneTouch = new List<PlaneTouchDelegate> ();
     //public delegate void EmptyTouchDelegate (Vector3 position );
     //public List<EmptyTouchDelegate> functionsOnEmptyTouch = new List<EmptyTouchDelegate> ();
 
@@ -22,18 +22,13 @@ public class InputModule : MonoBehaviour
    
     // Touch Variables
     private Vector2 touchStartPosition;
-    //private string direction;
     private List<int> knownTouchIds = new List<int> ();
     private float timeTouchEnded;
     float timeNoTouchSince = 0f;
     float touchTimeDelay = 1.2f;
 
-    // Touch Constants
-    //private float max_input_distance = 5f;
-    private float displayTime = 0.5f;
-
     // Mouse Point and Click
-    private Vector3 touchPoint = new Vector3 (10f, 0f, 0f); // current mouse position
+    private Vector3 touchPoint = new Vector3 (10f, 0f, 0f); // last click / touch position
 
     // Mouse Timing
     float lastClickTime = 0f;
@@ -86,6 +81,12 @@ public class InputModule : MonoBehaviour
             // Mouse Behaviour
             mousePointAndClick ();
         }
+    }
+
+    // Takes a function and adds it to the list of functions that gets executed every time a plane is touched
+    public void SubscribeFunctionToPlaneTouch (PlaneTouchDelegate function )
+    {
+        functionsOnPlaneTouch.Add (function);
     }
 
     // Handle touch input
