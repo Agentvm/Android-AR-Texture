@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
+//using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class InputModule : MonoBehaviour
 {
@@ -226,6 +227,8 @@ public class InputModule : MonoBehaviour
         {
             return false;
         }
+
+        if ( EventSystem.current.IsPointerOverGameObject () ) return false;
 
         // everything is fine
         return true;
