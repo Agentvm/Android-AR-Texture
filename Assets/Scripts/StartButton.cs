@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class StartButton : MonoBehaviour
 {
     Button startButton;
+    [SerializeField]DestroySelf panelDestroySelfReference;
     float timeLastClicked;
     float durationDoubleTapThreshold = 0.5f;
 
@@ -22,7 +23,10 @@ public class StartButton : MonoBehaviour
     void DestroyOnDoubleClick ()
     {
         if ( Time.time - timeLastClicked < durationDoubleTapThreshold )
+        {
             this.gameObject.SetActive (false);
+            panelDestroySelfReference.enabled = true;
+        }
         timeLastClicked = Time.time;
     }
 }
