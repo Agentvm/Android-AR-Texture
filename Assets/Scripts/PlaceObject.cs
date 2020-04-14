@@ -20,7 +20,7 @@ public class PlaceObject : MonoBehaviour
         // quickly load and then destroy all prefabs so the screen does not freeze on first placement
         foreach (Object objectToInstantiate in objectsToInstantiate)
         {
-            preloadedObjects.Add ((GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, 0f, 20f), new Quaternion (), this.transform ));
+            preloadedObjects.Add ((GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, 0f, 20f), Quaternion.identity, this.transform ));
         }
         
     }
@@ -46,8 +46,12 @@ public class PlaceObject : MonoBehaviour
     }
 
     // Make a new Instance of the object assigned in the Inspector, place it at the given position and rotate it towards the camera
-    void PlaceOnPlane (Transform touchedObjectTransform, Vector3 touchPosition)
+    void PlaceOnPlane (RaycastHit raycastHit)
     {
+        // Get Raycast info
+        Transform touchedObjectTransform = raycastHit.transform;
+        Vector3 touchPosition = raycastHit.point;
+
         // Check the touch information
         if ( !touchedObjectTransform || touchedObjectTransform.tag != "Plane" )
             return;
@@ -57,7 +61,7 @@ public class PlaceObject : MonoBehaviour
 
         // instantiate
         Object objectToInstantiate = objectsToInstantiate[Random.Range (0, objectsToInstantiate.Length)];
-        Transform instantiatedObject = ((GameObject)Instantiate (objectToInstantiate, touchPosition, new Quaternion (), this.transform )).transform;
+        Transform instantiatedObject = ((GameObject)Instantiate (objectToInstantiate, touchPosition, Quaternion.identity, this.transform )).transform;
 
         // rotate towards camera
         if ( !mainCamera ) return;

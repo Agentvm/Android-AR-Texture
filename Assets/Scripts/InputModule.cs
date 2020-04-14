@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-//using UnityEngine.UI;
+using System;
 using UnityEngine.EventSystems;
 
 public class InputModule : MonoBehaviour
@@ -10,10 +10,10 @@ public class InputModule : MonoBehaviour
     public static InputModule Instance = null;
 
     // Delegate for Touch Events
-    public delegate void TouchDelegate (Transform touchedObjectTransform, Vector3 touchPosition );
+    public delegate void TouchDelegate (RaycastHit rayCastHit );
     private List<TouchDelegate> functionsExectuedOnTouch = new List<TouchDelegate> ();
 
-    // Input Variables
+    // Input Variables 
     private bool touchInputActive = false;
 
     // Configuration
@@ -35,7 +35,6 @@ public class InputModule : MonoBehaviour
 
     // Raycasting
     Camera mainCamera;
-    RaycastHit rayHit;
     Ray ray;
 
     // Properties
@@ -89,7 +88,7 @@ public class InputModule : MonoBehaviour
     }
 
     // execute all functions that subscribe to a touch
-    void executeCallbackFunctions (Transform touchedObject, Vector3 touchPoint )
+    void executeCallbackFunctions (RaycastHit raycastHit )
     {
         if ( functionsExectuedOnTouch.Count == 0 ) return;
 
@@ -97,7 +96,7 @@ public class InputModule : MonoBehaviour
         foreach ( TouchDelegate delegateFunction in functionsExectuedOnTouch )
         {
             // Execute the stored function
-            delegateFunction (touchedObject, touchPoint);
+            delegateFunction (raycastHit);
         }
     }
 
@@ -125,12 +124,12 @@ public class InputModule : MonoBehaviour
                     // Check if tapped
                     if ( (touchStartPosition - touch.position).magnitude < tapThreshold )
                     {
-                        // Shoot a ray from the camera through the mouse position into the scene and store the collision point in touchPoint
-                        // Also get the transform of the object that was hit
-                        Transform raycastObjectTransform = TransformRaycast (touch.position );
+                        // Shoot a ray from the camera through the mouse position into the scene and store the hit info
+                        RaycastHit raycastHit = Raycast (touch.position);
 
                         // call all functions that subscribed to the touch
-                        executeCallbackFunctions (raycastObjectTransform, TouchPoint);
+                        if ( raycastHit.transform )
+                            executeCallbackFunctions (raycastHit);
                     }
 
                     // At the end of touch, remove it's ID from the list of known ID's
@@ -171,27 +170,28 @@ public class InputModule : MonoBehaviour
         {
             lastClickTime = Time.time;
 
-            // Shoot a ray from the camera through the mouse position into the scene and Store the collision point in touchPoint
-            // Also get the transform of the object that was hit
-            Transform raycastObjectTransform = TransformRaycast (Input.mousePosition);
+            // Shoot a ray from the camera through the mouse position into the scene and store the hit info
+            RaycastHit raycastHit = Raycast (Input.mousePosition);
 
             // call all functions that subscribed to the touch
-            executeCallbackFunctions (raycastObjectTransform, TouchPoint);
+            if ( raycastHit.transform )
+                executeCallbackFunctions (raycastHit );
         }
     }
 
     // Do a raycast from the main camera to the specified position, set the mouse position and return the object hit
-    Transform TransformRaycast ( Vector3 screen_point )
+    RaycastHit Raycast ( Vector3 screen_point )
     {
-        if ( !CheckRaycast (screen_point) ) return null;
-
+        // prepare raycast
+        RaycastHit raycastHit = new RaycastHit ();
         ray = mainCamera.ScreenPointToRay (screen_point);
-        if ( Physics.Raycast (ray, out rayHit) )
-        {
-            touchPoint = rayHit.point;
-            return rayHit.transform;
-        }
-        else return null;
+
+        // check ray integrity
+        if ( !CheckRaycast (screen_point) ) return raycastHit;
+
+        // cast ray
+        Physics.Raycast (ray, out raycastHit);
+        return raycastHit;
     }
 
     // validates Raycast point
@@ -209,7 +209,7 @@ public class InputModule : MonoBehaviour
             return false;
         }
 
-        if ( EventSystem.current.IsPointerOverGameObject () ) return false;
+        if ( EventSystem.current && EventSystem.current.IsPointerOverGameObject () ) return false;
 
         // everything is fine
         return true;
