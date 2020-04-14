@@ -58,13 +58,7 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
-Assets/RP_Character/rp_manuel_rigged_001/Materials/rp_manuel_rigged_001_gm.tga.meta
-Assets/RP_Character/00_Animations/Manuel.controller
-Assets/RP_Character/00_Animations/Manuel.controller.meta
-Assets/RP_Character/00_Animations/rp_manuel_animated_001_dancing_u3d.fbx
-Assets/RP_Character/00_Animations/rp_manuel_animated_001_dancing_u3d.fbx.meta
-Assets/RP_Character/rp_manuel_rigged_001.meta
-Assets/RP_Character/rp_manuel_rigged_001/Materials.meta
+# Manuel, large 3D Model
 Assets/RP_Character/rp_manuel_rigged_001/Materials/rp_manuel_rigged_001_dif.jpg
 Assets/RP_Character/rp_manuel_rigged_001/Materials/rp_manuel_rigged_001_dif.jpg.meta
 Assets/RP_Character/rp_manuel_rigged_001/Materials/rp_manuel_rigged_001_gm.tga
