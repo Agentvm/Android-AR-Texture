@@ -9,11 +9,9 @@ public class InputModule : MonoBehaviour
     // Static instance of InputModule which allows it to be accessed by any other script.
     public static InputModule Instance = null;
 
-    // Delegates for Touch Events
-    public delegate void PlaneTouchDelegate (Vector3 position );
-    private List<PlaneTouchDelegate> functionsOnPlaneTouch = new List<PlaneTouchDelegate> ();
-    //public delegate void EmptyTouchDelegate (Vector3 position );
-    //public List<EmptyTouchDelegate> functionsOnEmptyTouch = new List<EmptyTouchDelegate> ();
+    // Delegate for Touch Events
+    public delegate void TouchDelegate (Transform touchedObjectTransform, Vector3 touchPosition );
+    private List<TouchDelegate> functionsExectuedOnTouch = new List<TouchDelegate> ();
 
     // Input Variables
     private bool touchInputActive = false;
@@ -42,7 +40,7 @@ public class InputModule : MonoBehaviour
 
     // Properties
     public bool TouchInputActive { get => touchInputActive; }
-    public Vector3 MousePoint { get => touchPoint; }
+    public Vector3 TouchPoint { get => touchPoint; }
 
     // Singleton
     void Awake ()
@@ -53,7 +51,7 @@ public class InputModule : MonoBehaviour
         else if ( Instance != this )
             Destroy (gameObject);
         DontDestroyOnLoad (gameObject);
-}
+    }
 
     // initiate
     private void Start ()
@@ -66,7 +64,7 @@ public class InputModule : MonoBehaviour
     void Update()
     {
         // Touch input
-        if ( Input.touchCount > 0/* || InputHelper.GetTouches ().Count > 0*/)
+        if ( Input.touchCount > 0 )
         {
             // Get touch information
             touchInputActive = true;
@@ -84,10 +82,23 @@ public class InputModule : MonoBehaviour
         }
     }
 
-    // Takes a function and adds it to the list of functions that gets executed every time a plane is touched
-    public void SubscribeFunctionToPlaneTouch (PlaneTouchDelegate function )
+    // Takes a function and adds it to the list of functions that gets executed every time a touch is registered
+    public void SubscribeToTouch (TouchDelegate callbackFunction )
     {
-        functionsOnPlaneTouch.Add (function);
+        functionsExectuedOnTouch.Add (callbackFunction);
+    }
+
+    // execute all functions that subscribe to a touch
+    void executeCallbackFunctions (Transform touchedObject, Vector3 touchPoint )
+    {
+        if ( functionsExectuedOnTouch.Count == 0 ) return;
+
+        // Iterate through all functions stored
+        foreach ( TouchDelegate delegateFunction in functionsExectuedOnTouch )
+        {
+            // Execute the stored function
+            delegateFunction (touchedObject, touchPoint);
+        }
     }
 
     // Handle touch input
@@ -116,18 +127,10 @@ public class InputModule : MonoBehaviour
                     {
                         // Shoot a ray from the camera through the mouse position into the scene and store the collision point in touchPoint
                         // Also get the transform of the object that was hit
-                        Transform raycastObjectTransform = TransformRaycast (Input.mousePosition);
+                        Transform raycastObjectTransform = TransformRaycast (touch.position );
 
-                        // If functions have been stored in this list by other scripts
-                        if ( raycastObjectTransform && raycastObjectTransform.tag == "Plane" && functionsOnPlaneTouch.Count > 0 )
-                        {
-                            // Iterate through all functions stored
-                            foreach ( PlaneTouchDelegate delegateFunction in functionsOnPlaneTouch )
-                            {
-                                // Execute the stored function
-                                delegateFunction (touchPoint);
-                            }
-                        }
+                        // call all functions that subscribed to the touch
+                        executeCallbackFunctions (raycastObjectTransform, TouchPoint);
                     }
 
                     // At the end of touch, remove it's ID from the list of known ID's
@@ -171,17 +174,9 @@ public class InputModule : MonoBehaviour
             // Shoot a ray from the camera through the mouse position into the scene and Store the collision point in touchPoint
             // Also get the transform of the object that was hit
             Transform raycastObjectTransform = TransformRaycast (Input.mousePosition);
-            
-            // If functions have been stored in this list by other scripts
-            if ( raycastObjectTransform && raycastObjectTransform.tag == "Plane" && functionsOnPlaneTouch.Count > 0 )
-            {
-                // Iterate through all functions stored
-                foreach ( PlaneTouchDelegate delegateFunction in functionsOnPlaneTouch )
-                {
-                    // Execute the stored function
-                    delegateFunction (touchPoint);
-                }
-            }
+
+            // call all functions that subscribed to the touch
+            executeCallbackFunctions (raycastObjectTransform, TouchPoint);
         }
     }
 
@@ -198,20 +193,6 @@ public class InputModule : MonoBehaviour
         }
         else return null;
     }
-
-    //Vector3 PositionRaycast ( Vector3 screenPoint )
-    //{
-    //    if ( !CheckRaycast (screenPoint) ) return Vector3.zero;
-
-    //    ray = mainCamera.ScreenPointToRay (screenPoint);
-    //    if ( Physics.Raycast (ray, out rayHit) )
-    //    {
-    //        mousePoint = rayHit.point;
-    //        Debug.Log ("Raycasting");
-    //        return rayHit.point;
-    //    }
-    //    else return Vector3.zero;
-    //}
 
     // validates Raycast point
     bool CheckRaycast (Vector3 screenPoint )
