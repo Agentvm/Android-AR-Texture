@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 public class RenderDrawings : MonoBehaviour
 {
@@ -34,14 +35,25 @@ public class RenderDrawings : MonoBehaviour
     private void OnPostRender ()
     {
         // Assign the modified renderTexture to the touched object
-        activeObjectRenderer.material.mainTexture = renderTexture;
+        activeObjectRenderer.material.EnableKeyword ("_DETAIL_MULX2");
+        activeObjectRenderer.material.SetTexture ("_DetailAlbedoMap", renderTexture);
+
+        //activeObjectRenderer.material.mainTexture = renderTexture;
+        //activeObjectRenderer.material.SetTexture ("_Diffuse", renderTexture);
+
     }
 
     // Start rendering for one frame
     public void RenderBrushOnTexture (RaycastHit raycastHit)
     {
+        Debug.Log ("raycastHit.transform.name: " + raycastHit.transform.name);
+
         // save object renderer to assign renderTexture after rendering
-        activeObjectRenderer = raycastHit.transform.GetComponent<Renderer> ();
+        if ( raycastHit.transform.GetComponent<Renderer> () )
+            activeObjectRenderer = raycastHit.transform.GetComponent<Renderer> ();
+        //if ( raycastHit.transform.GetChild (0).GetComponent<Renderer> () )
+        //    activeObjectRenderer = raycastHit.transform.GetChild (0).GetComponent<Renderer> ();
+        else return;
 
         // set brush position to clicked uv coordinates (uv = screen: top-left (0,1), top-right (1,1), bottom-left (0,0), bottom-right (1,0))
         Vector3 brushPosition = renderCamera.ViewportToWorldPoint (new Vector3(raycastHit.textureCoord.x, raycastHit.textureCoord.y, 0.9f));
@@ -55,17 +67,15 @@ public class RenderDrawings : MonoBehaviour
 }
 
 /*
-    //Fetch the Renderer from the GameObject
-    m_Renderer = GetComponent<Renderer> ();
-
-    //Make sure to enable the Keywords
-    m_Renderer.material.EnableKeyword ("_NORMALMAP");
-    m_Renderer.material.EnableKeyword ("_METALLICGLOSSMAP");
-
-    //Set the Texture you assign in the Inspector as the main texture (Or Albedo)
-    m_Renderer.material.SetTexture("_MainTex", m_MainTexture);
-    //Set the Normal map using the Texture you assign in the Inspector
-    m_Renderer.material.SetTexture("_BumpMap", m_Normal);
-    //Set the Metallic Texture as a Texture you assign in the Inspector
-    m_Renderer.material.SetTexture ("_MetallicGlossMap", m_Metal);
+    //List<Texture> allTexture = new List<Texture>();
+    Shader shader = activeObjectRenderer.material.shader;
+    for ( int i = 0; i < ShaderUtil.GetPropertyCount (shader); i++ )
+    {
+        if ( ShaderUtil.GetPropertyType (shader, i) == ShaderUtil.ShaderPropertyType.TexEnv )
+        {
+            Debug.Log ("ShaderUtil.GetPropertyName(shader, i): " + ShaderUtil.GetPropertyName (shader, i));
+            //Texture texture = activeObjectRenderer.material.GetTexture(ShaderUtil.GetPropertyName(shader, i));
+            //allTexture.Add (texture);
+        }
+    }
 */

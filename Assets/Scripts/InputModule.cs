@@ -191,7 +191,36 @@ public class InputModule : MonoBehaviour
 
         // cast ray
         Physics.Raycast (ray, out raycastHit);
+
+        // If a model containing a skinned SkinnedMeshRenderer was hit, update the MeshCollider and cast another ray to get the right uv coordinates
+        if ( raycastHit.transform && raycastHit.transform.GetComponent<SkinnedMeshRenderer> () && raycastHit.transform.GetComponent<MeshCollider> () )
+        {
+            recalculateCollisionMesh (  raycastHit.transform.GetComponent<SkinnedMeshRenderer> (),
+                                        raycastHit.transform.GetComponent<MeshCollider> () );
+
+            Physics.Raycast (ray, out raycastHit);
+        }        
+
         return raycastHit;
+    }
+
+    void recalculateCollisionMesh (SkinnedMeshRenderer skinnedMeshRenderer, MeshCollider meshCollider )
+    {
+        // Bake the current status of the mesh
+        Mesh mesh = new Mesh();
+        skinnedMeshRenderer.BakeMesh (mesh);
+        
+        // re-scale vertices
+        Vector3[] verts=mesh.vertices;
+        float scale = 1.0f/skinnedMeshRenderer.transform.lossyScale.y;
+        for ( int i = 0; i < verts.Length; i++ )
+            verts[i] = verts[i] * scale;
+        mesh.vertices = verts;
+        mesh.RecalculateBounds ();
+
+        // Assign calculated mesh to meshCollider
+        meshCollider.sharedMesh = null;
+        meshCollider.sharedMesh = mesh;
     }
 
     // validates Raycast point
