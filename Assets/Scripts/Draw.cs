@@ -12,7 +12,7 @@ public class Draw : MonoBehaviour
     {
         renderDrawingsScriptReference = brushRenderCamera.GetComponent<RenderDrawings> ();
 
-        InputModule.Instance.SubscribeToTouch (drawOnClick);
+        //InputModule.Instance.SubscribeToTouch (drawOnClick);
     }
 
     // Update is called once per frame
@@ -32,6 +32,7 @@ public class Draw : MonoBehaviour
         brushRenderCamera.transform.LookAt (raycastHit.point);
 
         // draw on texture
-        renderDrawingsScriptReference.RenderBrushOnTexture ((RenderTexture)raycastHit.transform.GetComponent<Renderer> ().material.mainTexture);
+        //renderDrawingsScriptReference.RenderBrushOnTexture ((RenderTexture)raycastHit.transform.GetComponent<Renderer> ().material.mainTexture);
     }
+
 }
