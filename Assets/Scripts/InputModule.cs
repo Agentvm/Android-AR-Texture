@@ -31,7 +31,7 @@ public class InputModule : MonoBehaviour
 
     // Mouse Timing
     float lastClickTime = 0f;
-    float clickDelay = 0.3f;
+    float clickDelay = 0.1f;
 
     // Raycasting
     Camera mainCamera;

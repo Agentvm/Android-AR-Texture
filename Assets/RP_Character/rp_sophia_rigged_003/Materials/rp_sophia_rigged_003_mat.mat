@@ -4,8 +4,9 @@
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_Name: rp_sophia_rigged_003_mat
   m_Shader: {fileID: 4800000, guid: 498d301031d43744d90613877569d9bc, type: 3}
   m_ShaderKeywords: _AODIFFUSETOGGLE_ON
@@ -19,19 +20,19 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _Diffuse:
-        m_Texture: {fileID: 2800000, guid: 09c12bae2b90fc7478964472dcee208a, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DiffuseInputHighpass:
-        m_Texture: {fileID: 2800000, guid: 09c12bae2b90fc7478964472dcee208a, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GM:
-        m_Texture: {fileID: 2800000, guid: 329db419174918945ac05ea5479ca2d3, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Normal:
-        m_Texture: {fileID: 2800000, guid: 9f7ee8658ccca3e43b3d6bec53659fb0, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:

@@ -6,8 +6,12 @@ public class RenderDrawings : MonoBehaviour
 {
     // Components
     private Camera renderCamera;
-    private Transform brushTransform;
-    private Material unwrappingScreenMaterial;
+    [SerializeField]private GameObject brushObject;
+    //private MeshRenderer unwrappingScreenRenderer;
+    private RenderTexture renderTexture;
+
+    //
+    private Renderer activeObjectRenderer = null;
 
     // Logic
     private bool renderNow = false;
@@ -15,41 +19,38 @@ public class RenderDrawings : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        // Get Componentes
+        // Get Components and disable camera, so it can render on command with Render()
         renderCamera = this.GetComponent<Camera> ();
-        brushTransform = this.transform.GetChild (0).transform;
-        unwrappingScreenMaterial = this.transform.GetChild (1).transform.GetComponent<Renderer> ().material;
-
-        //this.gameObject.SetActive (false);
+        renderTexture = renderCamera.targetTexture;
+        renderCamera.enabled = false;
+        if ( !brushObject )
+            brushObject = (GameObject)Resources.Load ("Brush");
 
         // Register RenderBrushOnTexture() to get executed every time something is touched
         InputModule.Instance.SubscribeToTouch (RenderBrushOnTexture);
     }
 
-    private void Update ()
+    // Called after this Camera has taken one image
+    private void OnPostRender ()
     {
-        // If enabled, use one frame to render, then deactivate self
-        //if ( renderNow )
-        //    renderNow = false;
-        //else if (this.gameObject.activeSelf)
-        //    this.gameObject.SetActive (false);
+        // Assign the modified renderTexture to the touched object
+        activeObjectRenderer.material.mainTexture = renderTexture;
     }
 
     // Start rendering for one frame
     public void RenderBrushOnTexture (RaycastHit raycastHit)
     {
+        // save object renderer to assign renderTexture after rendering
+        activeObjectRenderer = raycastHit.transform.GetComponent<Renderer> ();
 
+        // set brush position to clicked uv coordinates (uv = screen: top-left (0,1), top-right (1,1), bottom-left (0,0), bottom-right (1,0))
+        Vector3 brushPosition = renderCamera.ViewportToWorldPoint (new Vector3(raycastHit.textureCoord.x, raycastHit.textureCoord.y, 0.9f));
 
-        this.gameObject.SetActive (true);
-        //renderCamera.targetTexture = renderTexture;
-        renderNow = true;
+        // Instantiate a new brush Instance
+        Instantiate (brushObject, brushPosition, brushObject.transform.rotation, this.transform);
 
-        // Set the textures
-        //unwrappingScreenMaterial = raycastHit.transform.GetComponent<Renderer> ().material;
-
-        // set brush to clicked uv coordinates (uv = screen: top-left (0,1), top-right (1,1), bottom-left (0,0), bottom-right (1,0))
-        Debug.Log ("raycastHit.textureCoord: " + raycastHit.textureCoord);
-        brushTransform.position = renderCamera.ViewportToWorldPoint (new Vector3(1f - raycastHit.textureCoord.x, 1f - raycastHit.textureCoord.y, 0.9f));
+        // Take a picture :)
+        renderCamera.Render ();
     }
 }
 
