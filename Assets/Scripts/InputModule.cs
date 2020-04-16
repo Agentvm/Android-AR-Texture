@@ -206,21 +206,45 @@ public class InputModule : MonoBehaviour
 
     void recalculateCollisionMesh (SkinnedMeshRenderer skinnedMeshRenderer, MeshCollider meshCollider )
     {
+        float start_time = Time.realtimeSinceStartup;
+
         // Bake the current status of the mesh
         Mesh mesh = new Mesh();
         skinnedMeshRenderer.BakeMesh (mesh);
-        
-        // re-scale vertices
-        Vector3[] verts=mesh.vertices;
+
+
+        float baking_time = (Time.realtimeSinceStartup - start_time);
+        float interval_time = Time.realtimeSinceStartup;
+
+        // Re-scale vertices
+        Vector3[] verts = mesh.vertices;
         float scale = 1.0f/skinnedMeshRenderer.transform.lossyScale.y;
-        for ( int i = 0; i < verts.Length; i++ )
+        for ( int i = 0; i < verts.Length; i+=1 )
             verts[i] = verts[i] * scale;
         mesh.vertices = verts;
+        
+        float re_scaling_time = (float)(Time.realtimeSinceStartup - interval_time);
+        interval_time = Time.realtimeSinceStartup;
+
         mesh.RecalculateBounds ();
+        
+        float bounds_time = (Time.realtimeSinceStartup - interval_time);
+        interval_time = Time.realtimeSinceStartup;
 
         // Assign calculated mesh to meshCollider
-        meshCollider.sharedMesh = null;
+        //meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = mesh;
+
+        float assign_time = (Time.realtimeSinceStartup - interval_time);
+
+        float overall_time = (Time.realtimeSinceStartup - start_time);
+        //Debug.Log ("Overall: " + overall_time + " seconds");
+
+        //Debug.Log ("Baking: " + ((baking_time/overall_time)*100) + "%");
+        //Debug.Log ("Re-scaling: " + ((re_scaling_time / overall_time) * 100) + "%");
+        //Debug.Log ("Bounds re-calculating: " + ((bounds_time / overall_time) * 100) + "%");
+        //Debug.Log ("Assigning: " + ((assign_time / overall_time) * 100) + "%");
+        
     }
 
     // validates Raycast point
