@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8198041820433039222}
   - component: {fileID: 8198041820423508254}
-  - component: {fileID: 5627439663728426929}
   m_Layer: 0
   m_Name: Sophia
-  m_TagString: Drawable
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -25,9 +24,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8198041820432868182}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.8981956, y: -1.97, z: -0.18846574}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.9923, y: 1.9923, z: 1.9923}
   m_Children:
   - {fileID: 8198041820433039224}
   m_Father: {fileID: 0}
@@ -52,20 +51,6 @@ Animator:
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!136 &5627439663728426929
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8198041820432868182}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  m_Radius: 0.5148387
-  m_Height: 1.889955
-  m_Direction: 1
-  m_Center: {x: 0.087568626, y: 0.8663442, z: -0.033732414}
 --- !u!1 &8198041820432868184
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,6 +61,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8198041820433039224}
   - component: {fileID: 8198041820427595742}
+  - component: {fileID: 34249966}
   m_Layer: 0
   m_Name: rp_sophia_rigged_003_geo
   m_TagString: Untagged
@@ -143,8 +129,22 @@ SkinnedMeshRenderer:
   m_Mesh: {fileID: 4300000, guid: 6c008c8a1f4f337409409a0d4eabff40, type: 3}
   m_Bones: []
   m_BlendShapeWeights: []
-  m_RootBone: {fileID: 0}
+  m_RootBone: {fileID: 8198041820433039224}
   m_AABB:
     m_Center: {x: -0.009721786, y: 0.89134085, z: 0.04459441}
     m_Extent: {x: 0.858281, y: 0.8920685, z: 0.16495709}
   m_DirtyAABB: 0
+--- !u!64 &34249966
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8198041820432868184}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 12
+  m_Mesh: {fileID: 4300000, guid: 6c008c8a1f4f337409409a0d4eabff40, type: 3}

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 8823698184559025999}
   - component: {fileID: 1512665758141968949}
-  - component: {fileID: 4526902653492200824}
   m_Layer: 0
   m_Name: Manuel
   m_TagString: Untagged
@@ -52,20 +51,6 @@ Animator:
   m_HasTransformHierarchy: 0
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!136 &4526902653492200824
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5489689378025418076}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 1.3349388
-  m_Height: 3.0508022
-  m_Direction: 1
-  m_Center: {x: 0.27066612, y: 0.9630704, z: 0}
 --- !u!1 &7043267322982515736
 GameObject:
   m_ObjectHideFlags: 0
@@ -76,6 +61,7 @@ GameObject:
   m_Component:
   - component: {fileID: 727211508396018181}
   - component: {fileID: 8040737565533415192}
+  - component: {fileID: 2502001395669656125}
   m_Layer: 0
   m_Name: rp_manuel_rigged_001_geo
   m_TagString: Untagged
@@ -148,3 +134,17 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0076595247, y: 0.94296795, z: 0.017829932}
     m_Extent: {x: 0.9558346, y: 0.9450008, z: 0.1819644}
   m_DirtyAABB: 0
+--- !u!64 &2502001395669656125
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7043267322982515736}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: -7181389400889471058, guid: 79ed5e30f25e57946a90f0b299c3e04d, type: 3}
