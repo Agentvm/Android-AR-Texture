@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6615281983927039369}
   - component: {fileID: 7290340368973000656}
   - component: {fileID: 4190686675042274018}
+  - component: {fileID: -5798602291445938150}
   m_Layer: 8
   m_Name: Brush
   m_TagString: Untagged
@@ -79,3 +80,18 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &-5798602291445938150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1979190293809728641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3be7b3303cbbc1b4083fa96225648aee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  greenBrushMaterial: {fileID: 2100000, guid: 51461677d61542a4db25b0aea340f898, type: 2}
+  yellowBrushMaterial: {fileID: 2100000, guid: 96ee776f89f80cc489f3c259602a2281, type: 2}
+  redBrushMaterial: {fileID: 2100000, guid: 07074d18c2e14e045926bb9ac1fdd6c1, type: 2}
