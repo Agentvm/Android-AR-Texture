@@ -64,7 +64,7 @@ GameObject:
   - component: {fileID: 2502001395669656125}
   m_Layer: 0
   m_Name: rp_manuel_rigged_001_geo
-  m_TagString: Untagged
+  m_TagString: Drawable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

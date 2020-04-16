@@ -2,7 +2,8 @@
  * 
 
  ToDo:
- Reduce Raycast max Lenght
+    Reduce Raycast max Lenght
+    Newly created Gameobjects don't care about the Heatmap Setting
 
 
 

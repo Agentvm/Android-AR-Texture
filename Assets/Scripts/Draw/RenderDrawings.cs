@@ -60,7 +60,6 @@ public class RenderDrawings : MonoBehaviour
     private void OnPostRender ()
     {
         // Assign the modified renderTexture to the touched object
-        //activeObjectRenderer.material.EnableKeyword ("_DETAIL_MULX2");
         activeObjectRenderer.material.SetTexture ("_DetailAlbedoMap", HeatmapConfigurations[lastActiveObject].RenderTexture);
     }
 
