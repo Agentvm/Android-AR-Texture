@@ -9,7 +9,6 @@ public class HeatmapButton : MonoBehaviour
 {
     Button heatmapButton;
     Text buttonText;
-    bool heatmapActive = false;
 
     // Start is called before the first frame update
     void Start ()
@@ -19,17 +18,27 @@ public class HeatmapButton : MonoBehaviour
         buttonText = heatmapButton.transform.GetChild (0).GetComponent<Text> ();
         heatmapButton.onClick.AddListener (ToggleHeatmap);
 
-        // Set the button color to disabled and hide the heatmap
-        heatmapButton.image.color = Color.white;
-        HideHeatmap ();
+        // Check heatmap status
+        if ( GameState.Instance.HeatmapActive )
+        {
+            // Set the button color to is-enabled and show the heatmap
+            ShowHeatmap ();
+            heatmapButton.image.color = Color.grey;
+        }
+        else
+        {
+            // Set the button color to can-be-enabled and hide the heatmap
+            HideHeatmap ();
+            heatmapButton.image.color = Color.white;
+        }
     }
 
     public void ToggleHeatmap ()
     {
-        if ( heatmapActive )
+        if ( GameState.Instance.HeatmapActive )
         {
             // Disable Hatmap
-            heatmapActive = false;
+            GameState.Instance.HeatmapActive = false;
             buttonText.text = "Show Heatmap";
             heatmapButton.image.color = Color.white;
             HideHeatmap ();
@@ -37,7 +46,7 @@ public class HeatmapButton : MonoBehaviour
         else
         {
             // Activate Heatmap
-            heatmapActive = true;
+            GameState.Instance.HeatmapActive = true;
             buttonText.text = "Hide Heatmap";
             heatmapButton.image.color = Color.grey;
             ShowHeatmap ();

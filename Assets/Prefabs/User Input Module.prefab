@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9199232669057084022}
   - component: {fileID: 9199232669057084017}
   - component: {fileID: 9199232669057084016}
+  - component: {fileID: 9199232667147886599}
   m_Layer: 0
   m_Name: User Input Module
   m_TagString: Untagged
@@ -52,7 +53,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9199232669057084023}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c0d271bfc5f40ea42b764e17cffb33cb, type: 3}
   m_Name: 
@@ -60,3 +61,16 @@ MonoBehaviour:
   objectsToInstantiate:
   - {fileID: 8198041820432868182, guid: 32fa6f66933619546841482d39b25a3f, type: 3}
   - {fileID: 5489689378025418076, guid: 174ebacab8b01f04c9fd0e295ee75814, type: 3}
+--- !u!114 &9199232667147886599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9199232669057084023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a30172181870114bb4a6a75ea7b28ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  heatmapActive: 0
