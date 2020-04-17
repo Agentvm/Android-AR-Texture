@@ -69,16 +69,9 @@ public class PlaceObject : MonoBehaviour
         if ( !objectToInstantiate || !touchedObjectTransform || touchedObjectTransform.tag != "Plane" )
             return;
 
-        // Instantiate the object and disable/enable the additional texture for the heatmap, depending on the global setting
+        // Instantiate the object
         Transform instantiatedObject = ((GameObject)Instantiate (objectToInstantiate, touchPosition,
                                                                  Quaternion.identity, this.transform )).transform;
-        if ( instantiatedObject.GetComponent<Renderer> () )
-        {
-            if ( GameState.Instance.HeatmapActive )
-                instantiatedObject.GetComponent<Renderer> ().material.EnableKeyword ("_DETAIL_MULX2");
-            else
-                instantiatedObject.GetComponent<Renderer> ().material.DisableKeyword ("_DETAIL_MULX2");
-        }
 
         // Rotate towards camera
         if ( !mainCamera ) return;
