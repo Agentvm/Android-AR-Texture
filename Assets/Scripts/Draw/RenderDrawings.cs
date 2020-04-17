@@ -36,8 +36,8 @@ public class RenderDrawings : MonoBehaviour
         if ( !brushObject )
             brushObject = (GameObject)Resources.Load ("Brush");
 
-        // Register RenderBrushOnTexture() to get executed every time something is touched
-        InputModule.Instance.SubscribeToTouch (RenderBrushOnTexture);
+        // Register RenderBrushesOnTexture() to get executed every time something is touched
+        InputModule.Instance.SubscribeToTouch (RenderBrushesOnTexture);
 
         // Fill brush pool with a number of newly instantiated brushes
         ReplenishBrushPool (50);
@@ -57,7 +57,8 @@ public class RenderDrawings : MonoBehaviour
     }
 
     // Place Brushes accoding to input and saved bush positions
-    public void RenderBrushOnTexture (RaycastHit raycastHit)
+    // Then render the brushes to a RenderTexture
+    public void RenderBrushesOnTexture (RaycastHit raycastHit)
     {
         Transform hitObjectTransform = raycastHit.transform;
         Vector2 hitTextureUVCoordinates = raycastHit.textureCoord;
@@ -67,38 +68,51 @@ public class RenderDrawings : MonoBehaviour
             activeObjectRenderer = hitObjectTransform.GetComponent<Renderer> ();
         else return;
 
-        // check if the object has been painted on before
-        // and place the brushes accordingly
+        // Place the brushes according to stored information and new input
+        RePlaceBrushes (hitObjectTransform, hitTextureUVCoordinates);
+
+        // Remember the last object painted on
+        lastActiveObject = hitObjectTransform;
+
+        // Take a picture :)
+        renderCamera.targetTexture = HeatmapConfigurations[hitObjectTransform].RenderTexture;
+        renderCamera.Render ();
+    }
+
+    // Place the brushes according to stored information and new input
+    void RePlaceBrushes (Transform touchedObject, Vector2 uvCoodinates)
+    {
+        // Check if the object has been painted on before
         if ( HeatmapConfigurations.Count == 0 ) // no painting done at all
         {
             // Add a new HeatmapConfiguration containing the touched UV coordinate as first position
-            HeatmapConfigurations.Add (hitObjectTransform, new HeatmapConfiguration (hitTextureUVCoordinates, OriginalRenderTexture ));
-            
+            HeatmapConfigurations.Add (touchedObject, new HeatmapConfiguration (uvCoodinates, OriginalRenderTexture));
+
             // Instantiate a new brush at the freshly clicked Position
-            InstantiateBrushFromPool (hitTextureUVCoordinates);
+            InstantiateBrushFromPool (uvCoodinates);
         }
-        else if ( !HeatmapConfigurations.ContainsKey (hitObjectTransform) ) // Object not yet known
+        else if ( !HeatmapConfigurations.ContainsKey (touchedObject) ) // Object not yet known
         {
             // tidy up all active brushes for a clean slate
             stowAllBrushesAway ();
 
             // Add a new HeatmapConfiguration containing the touched UV coordinate as first position
-            HeatmapConfigurations.Add (hitObjectTransform, new HeatmapConfiguration (hitTextureUVCoordinates, OriginalRenderTexture));
+            HeatmapConfigurations.Add (touchedObject, new HeatmapConfiguration (uvCoodinates, OriginalRenderTexture));
 
             // Instantiate a new brush at the freshly clicked Position
-            InstantiateBrushFromPool (hitTextureUVCoordinates);
+            InstantiateBrushFromPool (uvCoodinates);
         }
-        else if ( lastActiveObject && lastActiveObject != hitObjectTransform ) // we know this object
+        else if ( lastActiveObject && lastActiveObject != touchedObject ) // we know this object
         {
             // clean slate
             stowAllBrushesAway ();
 
             // Add the newest touch to the known positions
-            HeatmapConfigurations[hitObjectTransform].AddBrushPosition (hitTextureUVCoordinates);
-            List<Vector2> restoredBrushPositions = HeatmapConfigurations[hitObjectTransform].BrushPositions;
+            HeatmapConfigurations[touchedObject].AddBrushPosition (uvCoodinates);
+            List<Vector2> restoredBrushPositions = HeatmapConfigurations[touchedObject].BrushPositions;
 
             // reposition the active brushes to fit the new Configuration or get inactive brushes from the pool
-            foreach (Vector2 storedBrushPosition in restoredBrushPositions )
+            foreach ( Vector2 storedBrushPosition in restoredBrushPositions )
             {
                 InstantiateBrushFromPool (storedBrushPosition);
             }
@@ -107,16 +121,9 @@ public class RenderDrawings : MonoBehaviour
         {
             // Add the newest touch to the known positions and
             // Instantiate a new brush at the freshly clicked Position
-            HeatmapConfigurations[hitObjectTransform].AddBrushPosition (hitTextureUVCoordinates);
-            InstantiateBrushFromPool (hitTextureUVCoordinates);
+            HeatmapConfigurations[touchedObject].AddBrushPosition (uvCoodinates);
+            InstantiateBrushFromPool (uvCoodinates);
         }
-
-        // Remember the last object painted on
-        lastActiveObject = hitObjectTransform;
-
-        // Take a picture :)
-        renderCamera.targetTexture = HeatmapConfigurations[hitObjectTransform].RenderTexture;
-        renderCamera.Render ();
     }
 
     // Fill brush pool with a number of newly instantiated brushes
