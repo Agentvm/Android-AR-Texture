@@ -187,9 +187,8 @@ public class InputModule : MonoBehaviour
         RaycastHit raycastHit = new RaycastHit ();
         ray = mainCamera.ScreenPointToRay (screen_point);
 
-        // check ray integrity and check if UI blocking
-        if ( !CheckRaycast (screen_point) || (EventSystem.current && EventSystem.current.IsPointerOverGameObject () ))
-            return raycastHit;
+        // check ray integrity
+        if ( !CheckRaycast (screen_point) ) return raycastHit;
 
         // cast ray
         Physics.Raycast (ray, out raycastHit);
@@ -201,7 +200,7 @@ public class InputModule : MonoBehaviour
                                         raycastHit.transform.GetComponent<MeshCollider> () );
 
             Physics.Raycast (ray, out raycastHit);
-        }
+        }        
 
         return raycastHit;
     }

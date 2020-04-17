@@ -39,16 +39,25 @@ public class BrushColor : MonoBehaviour
 
     public void TurnGreen ()
     {
+        if ( !brushRenderer.material ) Debug.LogError ("brushRenderer.material missing");
+        if ( !redBrushMaterial ) Debug.LogError ("redBrushMaterial missing");
+
         brushRenderer.material = greenBrushMaterial;
     }
 
     public void TurnRed ()
     {
+        if (!brushRenderer.material) Debug.LogError ("brushRenderer.material missing");
+        if (!redBrushMaterial ) Debug.LogError ("redBrushMaterial missing");
+
         brushRenderer.material = redBrushMaterial;
     }
 
     public void TurnYellow ()
     {
+        if ( !brushRenderer.material ) Debug.LogError ("brushRenderer.material missing");
+        if ( !redBrushMaterial ) Debug.LogError ("redBrushMaterial missing");
+
         brushRenderer.material = yellowBrushMaterial;
     }
 
