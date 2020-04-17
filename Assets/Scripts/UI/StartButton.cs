@@ -7,6 +7,7 @@ public class StartButton : MonoBehaviour
 {
     Button startButton;
     [SerializeField]DestroySelf panelDestroySelfReference;
+    [SerializeField]GameObject enabledObject;
     float timeLastClicked;
     float durationDoubleTapThreshold = 0.5f;
 
@@ -25,7 +26,10 @@ public class StartButton : MonoBehaviour
         if ( Time.time - timeLastClicked < durationDoubleTapThreshold )
         {
             this.gameObject.SetActive (false);
-            panelDestroySelfReference.enabled = true;
+            if (panelDestroySelfReference)
+                panelDestroySelfReference.enabled = true;
+            if ( enabledObject )
+                enabledObject.SetActive (true);
         }
         timeLastClicked = Time.time;
     }

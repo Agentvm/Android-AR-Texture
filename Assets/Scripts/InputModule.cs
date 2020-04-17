@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 public class InputModule : MonoBehaviour
 {
     // Static instance of InputModule which allows it to be accessed by any other script.
-    public static InputModule Instance = null;
+    private static InputModule instance = null;
 
     // Delegate for Touch Events
     public delegate void TouchDelegate (RaycastHit rayCastHit );
@@ -38,6 +38,7 @@ public class InputModule : MonoBehaviour
     Ray ray;
 
     // Properties
+    public static InputModule Instance { get => instance; }
     public bool TouchInputActive { get => touchInputActive; }
     public Vector3 TouchPoint { get => touchPoint; }
 
@@ -45,9 +46,9 @@ public class InputModule : MonoBehaviour
     void Awake ()
     {
         // check that there is only one instance of this and that it is not destroyed on load
-        if ( Instance == null )
-            Instance = this;
-        else if ( Instance != this )
+        if ( instance == null )
+            instance = this;
+        else if ( instance != this )
             Destroy (gameObject);
         DontDestroyOnLoad (gameObject);
     }
@@ -206,15 +207,16 @@ public class InputModule : MonoBehaviour
 
     void recalculateCollisionMesh (SkinnedMeshRenderer skinnedMeshRenderer, MeshCollider meshCollider )
     {
-        float start_time = Time.realtimeSinceStartup;
+        // DEBUG: Timing
+        //float start_time = Time.realtimeSinceStartup;
 
         // Bake the current status of the mesh
         Mesh mesh = new Mesh();
         skinnedMeshRenderer.BakeMesh (mesh);
 
 
-        float baking_time = (Time.realtimeSinceStartup - start_time);
-        float interval_time = Time.realtimeSinceStartup;
+        //float baking_time = (Time.realtimeSinceStartup - start_time);
+        //float interval_time = Time.realtimeSinceStartup;
 
         // Re-scale vertices
         Vector3[] verts = mesh.vertices;
@@ -223,21 +225,20 @@ public class InputModule : MonoBehaviour
             verts[i] = verts[i] * scale;
         mesh.vertices = verts;
         
-        float re_scaling_time = (float)(Time.realtimeSinceStartup - interval_time);
-        interval_time = Time.realtimeSinceStartup;
+        //float re_scaling_time = (float)(Time.realtimeSinceStartup - interval_time);
+        //interval_time = Time.realtimeSinceStartup;
 
         mesh.RecalculateBounds ();
         
-        float bounds_time = (Time.realtimeSinceStartup - interval_time);
-        interval_time = Time.realtimeSinceStartup;
+        //float bounds_time = (Time.realtimeSinceStartup - interval_time);
+        //interval_time = Time.realtimeSinceStartup;
 
         // Assign calculated mesh to meshCollider
-        //meshCollider.sharedMesh = null;
         meshCollider.sharedMesh = mesh;
 
-        float assign_time = (Time.realtimeSinceStartup - interval_time);
+        //float assign_time = (Time.realtimeSinceStartup - interval_time);
 
-        float overall_time = (Time.realtimeSinceStartup - start_time);
+        //float overall_time = (Time.realtimeSinceStartup - start_time);
         //Debug.Log ("Overall: " + overall_time + " seconds");
 
         //Debug.Log ("Baking: " + ((baking_time/overall_time)*100) + "%");
@@ -250,10 +251,10 @@ public class InputModule : MonoBehaviour
     // validates Raycast point
     bool CheckRaycast (Vector3 screenPoint )
     {
-        // is main camera missing?
+        // Is main camera missing?
         if ( !mainCamera ) return false;
 
-        // is point in front of camera?
+        // Is point in front of camera?
         Vector3 viewport_point = mainCamera.ScreenToViewportPoint(screenPoint);
         if ( viewport_point.x > 1 || viewport_point.x < 0 ||
             viewport_point.y > 1 || viewport_point.y < 0 ||
@@ -262,9 +263,10 @@ public class InputModule : MonoBehaviour
             return false;
         }
 
+        // Pointing on UI?
         if ( EventSystem.current && EventSystem.current.IsPointerOverGameObject () ) return false;
 
-        // everything is fine
+        // Everything is fine
         return true;
     }
 
