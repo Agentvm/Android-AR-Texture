@@ -53,8 +53,8 @@ public class PlaceObject : MonoBehaviour
     // place it at the touched position and rotate it towards the camera
     void PlaceOnPlane (RaycastHit raycastHit)
     {
-        // Check if placement is active and there is at least one object to instantiate
-        if ( !GameState.Instance.PlacementActive || objectsToInstantiate.Length == 0 ) return;
+        // Check if placement is active, if a plane was hit and there is at least one object to instantiate
+        if ( !GameState.Instance.PlacementActive || objectsToInstantiate.Length == 0 || raycastHit.transform.tag != "Plane" ) return;
 
         // Get Raycast info and randomly choose an object to deploy
         Object objectToInstantiate = objectsToInstantiate[Random.Range (0, objectsToInstantiate.Length)];
