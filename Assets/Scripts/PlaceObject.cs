@@ -13,8 +13,6 @@ public class PlaceObject : MonoBehaviour
 
     // Objects
     [SerializeField] private Object[] objectsToInstantiate;
-    private List<GameObject> preloadedObjects = new List<GameObject> ();
-    private bool preloadComplete = false;
 
     // Start is called before the first frame update
     void Start()
@@ -24,32 +22,30 @@ public class PlaceObject : MonoBehaviour
         mainCamera = Camera.main;
 
         // Quickly load and then destroy all prefabs so the screen does not freeze on first placement
+        List<GameObject> preloadedObjects = new List<GameObject> ();
         foreach (Object objectToInstantiate in objectsToInstantiate)
         {
             preloadedObjects.Add ((GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, 0f, 20f), Quaternion.identity, this.transform ));
         }
-        
+        StartCoroutine (DestroyPreloadedObjects (preloadedObjects));
     }
 
-    // Update is called once per frame
-    void Update()
+    // Coroutine that waits until End of Frame, then destroys the preloaded Objects
+    IEnumerator DestroyPreloadedObjects ( List<GameObject> preloadedObjects )
     {
-        // Destroy preloaded objects shortly after the start of the app
-        if ( !preloadComplete && Time.time > 0.5f)
+        yield return new WaitForEndOfFrame ();
+
+        for ( int i = 0; i < preloadedObjects.Count; i++ )
         {
-            for( int i = 0; i < preloadedObjects.Count; i++ )
-            {
-                // destoy the preloaded Instance
-                Destroy (preloadedObjects[i]);
+            // destoy the preloaded Instance
+            Destroy (preloadedObjects[i]);
 
-                // make sure the Garbage is collected by overwriting the object
-                preloadedObjects[i] = new GameObject ();
-                Destroy (preloadedObjects[i]);
-            }
-
-            preloadedObjects.Clear ();
-            preloadComplete = true;
+            // make sure the Garbage is collected by overwriting the object
+            preloadedObjects[i] = new GameObject ();
+            Destroy (preloadedObjects[i]);
         }
+
+        preloadedObjects.Clear ();
     }
 
     // Get the raycast information from the touch event
@@ -69,9 +65,10 @@ public class PlaceObject : MonoBehaviour
         if ( !objectToInstantiate || !touchedObjectTransform || touchedObjectTransform.tag != "Plane" )
             return;
 
-        // Instantiate the object
+        // Instantiate the object and start a Coroutine that will disable the bright overlaying texture used for heatmaps
         Transform instantiatedObject = ((GameObject)Instantiate (objectToInstantiate, touchPosition,
                                                                  Quaternion.identity, this.transform )).transform;
+        //StartCoroutine (ToggleKeyword (instantiatedObject));
 
         // Rotate towards camera
         if ( !mainCamera ) return;
@@ -79,4 +76,18 @@ public class PlaceObject : MonoBehaviour
         float heightDifference = mainCamera.transform.position.y - instantiatedObject.position.y;
         instantiatedObject.LookAt (mainCamera.transform.position - Vector3.up * heightDifference);
     }
+
+    //IEnumerator ToggleKeyword (Transform objectTransform)
+    //{
+    //    yield return new WaitForSeconds (2f);
+
+    //    if ( objectTransform.GetComponent<Renderer> () )
+    //    {
+    //        // Disable/enable the additional texture showing the heatmap, depending on the global setting
+    //        if ( GameState.Instance.HeatmapActive )
+    //            objectTransform.GetComponent<Renderer> ().material.EnableKeyword ("_DETAIL_MULX2");
+    //        else
+    //            objectTransform.GetComponent<Renderer> ().material.DisableKeyword ("_DETAIL_MULX2");
+    //    }
+    //}
 }
