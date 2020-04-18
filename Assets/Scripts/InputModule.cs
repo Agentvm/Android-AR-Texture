@@ -126,7 +126,7 @@ public class InputModule : MonoBehaviour
                     if ( (touchStartPosition - touch.position).magnitude < tapThreshold )
                     {
                         // Shoot a ray from the camera through the mouse position into the scene and store the hit info
-                        RaycastHit raycastHit = Raycast (touch.position);
+                        RaycastHit raycastHit = Raycast (touch.position, touch.fingerId);
 
                         // call all functions that subscribed to the touch
                         if ( raycastHit.transform )
@@ -181,14 +181,15 @@ public class InputModule : MonoBehaviour
     }
 
     // Do a raycast from the main camera to the specified position, set the mouse position and return the object hit
-    RaycastHit Raycast ( Vector3 screen_point )
+    RaycastHit Raycast ( Vector3 screen_point, int fingerID = -1 )
     {
         // prepare raycast
         RaycastHit raycastHit = new RaycastHit ();
         ray = mainCamera.ScreenPointToRay (screen_point);
 
-        // check ray integrity
-        if ( !CheckRaycast (screen_point) ) return raycastHit;
+        // check ray integrity and check if UI should block raycast
+        if ( !CheckRaycast (screen_point) || (EventSystem.current && EventSystem.current.IsPointerOverGameObject (fingerID)) )
+            return raycastHit;
 
         // cast ray
         Physics.Raycast (ray, out raycastHit);
@@ -199,53 +200,46 @@ public class InputModule : MonoBehaviour
             recalculateCollisionMesh (  raycastHit.transform.GetComponent<SkinnedMeshRenderer> (),
                                         raycastHit.transform.GetComponent<MeshCollider> () );
 
-            Physics.Raycast (ray, out raycastHit);
-        }        
+            // Nullify Raycast and try again at end of frame, as the mesh has changed
+            StartCoroutine (DelayedRaycast (ray));
+            raycastHit = new RaycastHit ();
+        }
 
         return raycastHit;
     }
 
+    // Update the meshCollider mesh of the model hit, so the correct uv coordinate can be deduced (this is computation intensive)
     void recalculateCollisionMesh (SkinnedMeshRenderer skinnedMeshRenderer, MeshCollider meshCollider )
     {
-        // DEBUG: Timing
-        //float start_time = Time.realtimeSinceStartup;
+        //// slow, but correct? version
+        //bakeMesh = new Mesh ();
+        //skinnedMeshRenderer.BakeMesh (bakeMesh);
+        //meshCollider.sharedMesh = bakeMesh;
 
-        // Bake the current status of the mesh
-        Mesh mesh = new Mesh();
-        skinnedMeshRenderer.BakeMesh (mesh);
+        // Bake the current status of the mesh directly into the collider mesh
+        meshCollider.sharedMesh = new Mesh ();
+        skinnedMeshRenderer.BakeMesh (meshCollider.sharedMesh);
 
+        //// Re-scale vertices
+        //Vector3[] verts = meshCollider.sharedMesh.vertices;
+        //float scale = 1.0f/skinnedMeshRenderer.transform.lossyScale.y;
+        //for ( int i = 0; i < verts.Length; i += 1 )
+        //    verts[i] = verts[i] * scale;
+        //meshCollider.sharedMesh.vertices = verts;
+    }
 
-        //float baking_time = (Time.realtimeSinceStartup - start_time);
-        //float interval_time = Time.realtimeSinceStartup;
+    // Do a raycast at the end of frame and if it succeeds, call all subscribed functions
+    IEnumerator DelayedRaycast ( Ray ray )
+    {
+        yield return new WaitForEndOfFrame ();
 
-        // Re-scale vertices
-        Vector3[] verts = mesh.vertices;
-        float scale = 1.0f/skinnedMeshRenderer.transform.lossyScale.y;
-        for ( int i = 0; i < verts.Length; i+=1 )
-            verts[i] = verts[i] * scale;
-        mesh.vertices = verts;
-        
-        //float re_scaling_time = (float)(Time.realtimeSinceStartup - interval_time);
-        //interval_time = Time.realtimeSinceStartup;
+        // Delayed until Frame end (otherwise the newly baked collision mesh ignores raycasts)
+        RaycastHit raycastHit = new RaycastHit ();
+        Physics.Raycast (ray, out raycastHit);
 
-        mesh.RecalculateBounds ();
-        
-        //float bounds_time = (Time.realtimeSinceStartup - interval_time);
-        //interval_time = Time.realtimeSinceStartup;
-
-        // Assign calculated mesh to meshCollider
-        meshCollider.sharedMesh = mesh;
-
-        //float assign_time = (Time.realtimeSinceStartup - interval_time);
-
-        //float overall_time = (Time.realtimeSinceStartup - start_time);
-        //Debug.Log ("Overall: " + overall_time + " seconds");
-
-        //Debug.Log ("Baking: " + ((baking_time/overall_time)*100) + "%");
-        //Debug.Log ("Re-scaling: " + ((re_scaling_time / overall_time) * 100) + "%");
-        //Debug.Log ("Bounds re-calculating: " + ((bounds_time / overall_time) * 100) + "%");
-        //Debug.Log ("Assigning: " + ((assign_time / overall_time) * 100) + "%");
-        
+        // Call all functions that subscribed to the touch
+        if ( raycastHit.transform )
+            executeCallbackFunctions (raycastHit);
     }
 
     // validates Raycast point
