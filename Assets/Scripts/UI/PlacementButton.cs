@@ -9,6 +9,7 @@ public class PlacementButton : MonoBehaviour
 {
     Button placementButton;
     Text buttonText;
+    bool disabled = false;
 
     // Start is called before the first frame update
     void Start ()
@@ -33,9 +34,11 @@ public class PlacementButton : MonoBehaviour
 
     public void TogglePlacement ()
     {
+        if ( disabled ) return;
+
         if ( GameState.Instance.PlacementActive )
         {
-            // Disable Hatmap
+            // Disable Heatmap
             GameState.Instance.PlacementActive = false;
             buttonText.text = "Enable Placement";
             placementButton.image.color = Color.white;
@@ -47,5 +50,14 @@ public class PlacementButton : MonoBehaviour
             buttonText.text = "Disable Placement";
             placementButton.image.color = Color.grey;
         }
+    }
+
+    public void Disable (string disabledText = "Placement Disabled")
+    {
+        // Disable Button
+        GameState.Instance.PlacementActive = false;
+        buttonText.text = disabledText;
+        placementButton.image.color = Color.grey;
+        disabled = true;
     }
 }

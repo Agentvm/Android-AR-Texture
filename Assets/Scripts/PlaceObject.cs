@@ -54,7 +54,8 @@ public class PlaceObject : MonoBehaviour
     void PlaceOnPlane (RaycastHit raycastHit)
     {
         // Check if placement is active, if a plane was hit and there is at least one object to instantiate
-        if ( !GameState.Instance.PlacementActive || objectsToInstantiate.Length == 0 || raycastHit.transform.tag != "Plane" ) return;
+        if ( !GameState.Instance.PlacementActive || GameState.Instance.PlacementForbidden ||
+             objectsToInstantiate.Length == 0 || raycastHit.transform.tag != "Plane" ) return;
 
         // Get Raycast info and randomly choose an object to deploy
         Object objectToInstantiate = objectsToInstantiate[Random.Range (0, objectsToInstantiate.Length)];
@@ -65,10 +66,10 @@ public class PlaceObject : MonoBehaviour
         if ( !objectToInstantiate || !touchedObjectTransform || touchedObjectTransform.tag != "Plane" )
             return;
 
-        // Instantiate the object and start a Coroutine that will disable the bright overlaying texture used for heatmaps
+        // Instantiate the object and register it
         Transform instantiatedObject = ((GameObject)Instantiate (objectToInstantiate, touchPosition,
                                                                  Quaternion.identity, this.transform )).transform;
-        //StartCoroutine (ToggleKeyword (instantiatedObject));
+        GameState.Instance.registerPlacedObject (instantiatedObject);
 
         // Rotate towards camera
         if ( !mainCamera ) return;
@@ -76,18 +77,4 @@ public class PlaceObject : MonoBehaviour
         float heightDifference = mainCamera.transform.position.y - instantiatedObject.position.y;
         instantiatedObject.LookAt (mainCamera.transform.position - Vector3.up * heightDifference);
     }
-
-    //IEnumerator ToggleKeyword (Transform objectTransform)
-    //{
-    //    yield return new WaitForSeconds (2f);
-
-    //    if ( objectTransform.GetComponent<Renderer> () )
-    //    {
-    //        // Disable/enable the additional texture showing the heatmap, depending on the global setting
-    //        if ( GameState.Instance.HeatmapActive )
-    //            objectTransform.GetComponent<Renderer> ().material.EnableKeyword ("_DETAIL_MULX2");
-    //        else
-    //            objectTransform.GetComponent<Renderer> ().material.DisableKeyword ("_DETAIL_MULX2");
-    //    }
-    //}
 }

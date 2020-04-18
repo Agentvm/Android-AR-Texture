@@ -10,11 +10,20 @@ public class GameState : MonoBehaviour
     // Game Variables
     [SerializeField]private bool heatmapActive = false;
     [SerializeField]private bool placementActive = true;
+    [SerializeField]private bool placementForbidden = false;
+    [SerializeField]int maxPlacedObjects = 4;
+    List<Transform> placedObjects = new List<Transform> ();
+
+    // References
+    [SerializeField]PlacementButton placementButtonReference;
 
     // Properties
     public static GameState Instance { get => instance; }
     public bool HeatmapActive { get => heatmapActive; set => heatmapActive = value; }
     public bool PlacementActive { get => placementActive; set => placementActive = value; }
+    public bool PlacementForbidden { get => placementForbidden; }
+    public List<Transform> PlacedObjects { get => placedObjects; }
+    public int MaxPlacedObjects { get => maxPlacedObjects; }
 
     // Singleton
     void Awake ()
@@ -25,5 +34,18 @@ public class GameState : MonoBehaviour
         else if ( instance != this )
             Destroy (gameObject);
         DontDestroyOnLoad (gameObject);
+    }
+
+    public void registerPlacedObject (Transform objectTransform)
+    {
+        placedObjects.Add (objectTransform);
+
+        // Disable Placement
+        if ( PlacedObjects.Count == MaxPlacedObjects )
+        {
+            placementForbidden = true;
+            if ( placementButtonReference )
+                placementButtonReference.Disable ("Maximum Objects");
+        }
     }
 }

@@ -1653,6 +1653,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 9199232667147886599, guid: 5e415a5c1e150a74aabba08506354013,
+        type: 3}
+      propertyPath: placementButtonReference
+      value: 
+      objectReference: {fileID: 2085583915}
     - target: {fileID: 9199232667147886603, guid: 5e415a5c1e150a74aabba08506354013,
         type: 3}
       propertyPath: m_Enabled
