@@ -67,12 +67,12 @@ public class RenderDrawings : MonoBehaviour
         if ( hitObjectTransform.tag == "Plane" )
         {
             // Simply place a brush Instance on the plane
-            Transform placedBrush = InstantiateBrushFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
+            Transform placedBrush = RemoveBrushFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
             placedBrush.tag = "Drawing";
 
             // Hide, if heatmap is not shown
             if ( !GameState.Instance.HeatmapActive )
-                placedBrush.gameObject.SetActive (false);
+                placedBrush.GetComponent<MeshRenderer> ().enabled = false;
         }
         else if (hitObjectTransform.tag == "Drawable")
         {
@@ -181,9 +181,9 @@ public class RenderDrawings : MonoBehaviour
         return activatedBrush;
     }
 
-    // Dequeue one brush from the inactive queue into the active List
-    // And place it at the given coordinates
-    Transform InstantiateBrushFromPool ( Vector3 brushPosition, Quaternion brushRotation )
+    // Dequeue one brush from the inactive queue, but don't put it into the active list,
+    // permanently place it at the given position instead
+    Transform RemoveBrushFromPool ( Vector3 brushPosition, Quaternion brushRotation )
     {
         Transform activatedBrush = null;
 
@@ -201,8 +201,7 @@ public class RenderDrawings : MonoBehaviour
             activatedBrush.rotation = brushRotation;
         }
 
-        // Mark the Instance active
-        activeBrushes.Add (activatedBrush);
+        // Do not mark the Instance active
 
         // Recolor it, if the user is clicking on one spot repeatedly
         List<Transform> taggedNodes = new List<Transform> ();

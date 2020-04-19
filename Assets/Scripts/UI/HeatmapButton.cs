@@ -63,7 +63,7 @@ public class HeatmapButton : MonoBehaviour
 
         // Find all GameObjects tagged Drawing (Brushes placed in Scene)
         foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Drawing") )
-            gObject.SetActive (true);
+            gObject.GetComponent<MeshRenderer> ().enabled = true;
     }
 
     // Hide Heatmaps by disabling the Albedo Detail Texture on all materials of GameObjects tagged "Drawable" or "Plane"
@@ -76,6 +76,6 @@ public class HeatmapButton : MonoBehaviour
 
         // Find all GameObjects tagged Drawing (Brushes placed in Scene)
         foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Drawing") )
-            gObject.SetActive (false);
+            gObject.GetComponent<MeshRenderer> ().enabled = false;
     }
 }
