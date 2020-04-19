@@ -7,6 +7,7 @@ TagManager:
   - Plane
   - Drawable
   - UserAddedObject
+  - Drawing
   layers:
   - Default
   - TransparentFX

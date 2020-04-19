@@ -56,28 +56,26 @@ public class HeatmapButton : MonoBehaviour
     // Show Heatmaps by enabling the Albedo Detail Texture on all materials of GameObjects tagged "Drawable" or "Plane"
     void ShowHeatmap ()
     {
-        // Find all GameObjects tagged Drawable
+        // Find all GameObjects tagged Drawable (Objects with RenderTexture)
         foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Drawable") )
             if ( gObject.GetComponent<Renderer> () )
                 gObject.GetComponent<Renderer> ().material.EnableKeyword ("_DETAIL_MULX2");
 
-        // Find all GameObjects tagged Plane
-        foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Plane") )
-            if ( gObject.GetComponent<Renderer> () )
-                gObject.GetComponent<Renderer> ().material.EnableKeyword ("_DETAIL_MULX2");
+        // Find all GameObjects tagged Drawing (Brushes placed in Scene)
+        foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Drawing") )
+            gObject.SetActive (true);
     }
 
     // Hide Heatmaps by disabling the Albedo Detail Texture on all materials of GameObjects tagged "Drawable" or "Plane"
     void HideHeatmap ()
     {
-        // Find all GameObjects tagged Drawable
+        // Find all GameObjects tagged Drawable (Objects with RenderTexture)
         foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Drawable") )
             if ( gObject.GetComponent<Renderer> () )
                 gObject.GetComponent<Renderer> ().material.DisableKeyword ("_DETAIL_MULX2");
 
-        // Find all GameObjects tagged Plane
-        foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Plane") )
-            if ( gObject.GetComponent<Renderer> () )
-                gObject.GetComponent<Renderer> ().material.DisableKeyword ("_DETAIL_MULX2");
+        // Find all GameObjects tagged Drawing (Brushes placed in Scene)
+        foreach ( GameObject gObject in GameObject.FindGameObjectsWithTag ("Drawing") )
+            gObject.SetActive (false);
     }
 }

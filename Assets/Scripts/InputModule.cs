@@ -200,9 +200,12 @@ public class InputModule : MonoBehaviour
             recalculateCollisionMesh (  raycastHit.transform.GetComponent<SkinnedMeshRenderer> (),
                                         raycastHit.transform.GetComponent<MeshCollider> () );
 
+            // raycast again
+            Physics.Raycast (ray, out raycastHit);
+
             // Nullify Raycast and try again at end of frame, as the mesh has changed
-            StartCoroutine (DelayedRaycast (ray));
-            raycastHit = new RaycastHit ();
+            //StartCoroutine (DelayedRaycast (ray));
+            //raycastHit = new RaycastHit ();
         }
 
         return raycastHit;
@@ -212,13 +215,13 @@ public class InputModule : MonoBehaviour
     void recalculateCollisionMesh (SkinnedMeshRenderer skinnedMeshRenderer, MeshCollider meshCollider )
     {
         //// slow, but correct? version
-        //bakeMesh = new Mesh ();
-        //skinnedMeshRenderer.BakeMesh (bakeMesh);
-        //meshCollider.sharedMesh = bakeMesh;
+        Mesh bakeMesh = new Mesh ();
+        skinnedMeshRenderer.BakeMesh (bakeMesh);
+        meshCollider.sharedMesh = bakeMesh;
 
         // Bake the current status of the mesh directly into the collider mesh
-        meshCollider.sharedMesh = new Mesh ();
-        skinnedMeshRenderer.BakeMesh (meshCollider.sharedMesh);
+        //meshCollider.sharedMesh = new Mesh ();
+        //skinnedMeshRenderer.BakeMesh (meshCollider.sharedMesh);
 
         //// Re-scale vertices
         //Vector3[] verts = meshCollider.sharedMesh.vertices;
