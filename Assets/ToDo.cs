@@ -2,11 +2,12 @@
  * 
 
  ToDo:
+    Plane Brush performance
     (Make brush scale with object size)
     Reduce Raycast max Lenght
-    Refactor RenderDrawings (seperate Script for brush placement in scene)
 
  Done:
+    Refactor RenderDrawings (seperate Script for brush placement in scene)
     Fix Brush Scaling
     Make Brushes more visible
     Block Raycasts when the UI was touched

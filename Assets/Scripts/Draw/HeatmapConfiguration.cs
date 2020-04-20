@@ -8,19 +8,19 @@ using UnityEngine;
 */
 public class HeatmapConfiguration// : MonoBehaviour
 {
-    List<Vector2> brushPositions = new List<Vector2> ();
+    List<Vector3> brushPositions = new List<Vector3> ();
     RenderTexture renderTexture;
 
-    public HeatmapConfiguration (Vector2 initialBrushPosition, RenderTexture renderTextureToCopy)
+    public HeatmapConfiguration (Vector3 initialBrushPosition, RenderTexture renderTextureToCopy)
     {
         brushPositions.Add (initialBrushPosition);
         renderTexture = new RenderTexture (renderTextureToCopy);
     }
 
-    public List<Vector2> BrushPositions { get => brushPositions; }
+    public List<Vector3> BrushPositions { get => brushPositions; }
     public RenderTexture RenderTexture { get => renderTexture; }
 
-    public void AddBrushPosition (Vector2 brushPosition)
+    public void AddBrushPosition (Vector3 brushPosition)
     {
         brushPositions.Add (brushPosition);
     }

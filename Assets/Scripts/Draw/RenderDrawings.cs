@@ -11,7 +11,6 @@ public class RenderDrawings : MonoBehaviour
 {
     // Components
     private Camera renderCamera;
-    [SerializeField]private GameObject brushObject;
     private RenderTexture OriginalRenderTexture;
 
     // Configuration
@@ -29,28 +28,22 @@ public class RenderDrawings : MonoBehaviour
     Transform lastActiveObject = null; // remember the last object painted on
 
     // Saved Brush Positions
-    Dictionary<Transform, HeatmapConfiguration> HeatmapConfigurations = new Dictionary<Transform, HeatmapConfiguration> ();    
+    Dictionary<Transform, HeatmapConfiguration> HeatmapConfigurations = new Dictionary<Transform, HeatmapConfiguration> ();
 
     // Pooling mechanism instead of constantly enabling and disabling objects
-    Queue<Transform> inactiveBrushPool = new Queue<Transform> ();
-    List<Transform> activeBrushes = new List<Transform> ();
-    int brushPoolSize = 50;
+    ObjectPool brushPool;
 
     // Start is called before the first frame update
-    void Start()
+    void Start ()
     {
         // Get Components and disable camera, so it can render on command with Render()
         renderCamera = this.GetComponent<Camera> ();
         OriginalRenderTexture = renderCamera.targetTexture;
         renderCamera.enabled = false;
-        if ( !brushObject )
-            brushObject = (GameObject)Resources.Load ("Brush");
+        brushPool = this.GetComponent<ObjectPool> ();
 
         // Register RenderBrushesOnTexture() to get executed every time something is touched
         InputModule.Instance.SubscribeToTouch (RenderBrushesOnTexture);
-
-        // Fill the brush pool with a number of newly instantiated brushes
-        ReplenishBrushPool (50);
 
         // Render one picture to set the RenderTexture content to empty
         renderCamera.Render ();
@@ -82,9 +75,16 @@ public class RenderDrawings : MonoBehaviour
         if ( hitObjectTransform.tag == "Plane" )
         {
             // Simply place a brush Instance on the plane
-            Transform placedBrush = RemoveBrushFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
+            Transform placedBrush = brushPool.RemoveElementFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
             placedBrush.tag = "Drawing";
             placedBrush.localScale = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);
+
+            // Change brush color
+            List<Transform> taggedNodes = new List<Transform> ();
+            foreach ( GameObject gO in GameObject.FindGameObjectsWithTag ("Drawing") )
+                taggedNodes.Add (gO.GetComponent<Transform> ());
+
+            determineBrushColor (placedBrush, taggedNodes);
 
             // Hide, if heatmap is not shown
             if ( !GameState.Instance.HeatmapActive )
@@ -110,135 +110,60 @@ public class RenderDrawings : MonoBehaviour
     }
 
     // Place the brushes according to stored information and new input
-    void RePlaceBrushes (Transform touchedObject, Vector2 uvCoodinates)
+    void RePlaceBrushes (Transform touchedObject, Vector2 uvCoordinates)
     {
+        // set brush position to clicked uv coordinates (uv = screen: top-left (0,1), top-right (1,1), bottom-left (0,0), bottom-right (1,0))
+        Vector3 brushPosition = renderCamera.ViewportToWorldPoint (new Vector3 (uvCoordinates.x, uvCoordinates.y, 0.9f));
+
         // Check if the object has been painted on before
         if ( HeatmapConfigurations.Count == 0 ) // no painting done at all
         {
             // Add a new HeatmapConfiguration containing the touched UV coordinate as first position
-            HeatmapConfigurations.Add (touchedObject, new HeatmapConfiguration (uvCoodinates, OriginalRenderTexture));
+            HeatmapConfigurations.Add (touchedObject, new HeatmapConfiguration (brushPosition, OriginalRenderTexture));
 
             // Instantiate a new brush at the freshly clicked Position
-            InstantiateBrushFromPool (uvCoodinates);
+            Transform instantiatedBrush = brushPool.InstantiateElementFromPool (brushPosition);
+            determineBrushColor (instantiatedBrush, brushPool.ActiveElements);
+            instantiatedBrush.localScale = new Vector3 (brushScale, brushScale, brushScale);
         }
         else if ( !HeatmapConfigurations.ContainsKey (touchedObject) ) // Object not yet known
         {
             // tidy up all active brushes for a clean slate
-            stowAllBrushesAway ();
+            brushPool.poolAllElements ();
 
             // Add a new HeatmapConfiguration containing the touched UV coordinate as first position
-            HeatmapConfigurations.Add (touchedObject, new HeatmapConfiguration (uvCoodinates, OriginalRenderTexture));
-
-            // Instantiate a new brush at the freshly clicked Position
-            InstantiateBrushFromPool (uvCoodinates);
+            HeatmapConfigurations.Add (touchedObject, new HeatmapConfiguration (brushPosition, OriginalRenderTexture));
+            
+            Transform instantiatedBrush = brushPool.InstantiateElementFromPool (brushPosition);
+            determineBrushColor (instantiatedBrush, brushPool.ActiveElements);
+            instantiatedBrush.localScale = new Vector3 (brushScale, brushScale, brushScale);
         }
         else if ( lastActiveObject && lastActiveObject != touchedObject ) // we know this object
         {
             // clean slate
-            stowAllBrushesAway ();
+            brushPool.poolAllElements ();
 
             // Add the newest touch to the known positions
-            HeatmapConfigurations[touchedObject].AddBrushPosition (uvCoodinates);
-            List<Vector2> restoredBrushPositions = HeatmapConfigurations[touchedObject].BrushPositions;
+            HeatmapConfigurations[touchedObject].AddBrushPosition (brushPosition);
+            List<Vector3> restoredBrushPositions = HeatmapConfigurations[touchedObject].BrushPositions;
 
             // reposition the active brushes to fit the new Configuration or get inactive brushes from the pool
-            foreach ( Vector2 storedBrushPosition in restoredBrushPositions )
+            foreach ( Vector3 storedBrushPosition in restoredBrushPositions )
             {
-                InstantiateBrushFromPool (storedBrushPosition);
+                Transform instantiatedBrush = brushPool.InstantiateElementFromPool (storedBrushPosition);
+                determineBrushColor (instantiatedBrush, brushPool.ActiveElements);
+                instantiatedBrush.localScale = new Vector3 (brushScale, brushScale, brushScale);
             }
         }
         else // this is the object we clicked on before
         {
             // Add the newest touch to the known positions and
             // Instantiate a new brush at the freshly clicked Position
-            HeatmapConfigurations[touchedObject].AddBrushPosition (uvCoodinates);
-            InstantiateBrushFromPool (uvCoodinates);
+            HeatmapConfigurations[touchedObject].AddBrushPosition (brushPosition);
+            Transform instantiatedBrush = brushPool.InstantiateElementFromPool (brushPosition);
+            determineBrushColor (instantiatedBrush, brushPool.ActiveElements);
+            instantiatedBrush.localScale = new Vector3 (brushScale, brushScale, brushScale);
         }
-    }
-
-    // Fill brush pool with a number of newly instantiated brushes
-    void ReplenishBrushPool ( int numberOfNewBrushes = 10 )
-    {
-        for ( int i = 0; i < brushPoolSize; i++ )
-        {
-            // instantiate at renderCamera position, so they can't be seen
-            inactiveBrushPool.Enqueue (((GameObject)Instantiate (brushObject,
-                                                                 this.transform.position,
-                                                                 brushObject.transform.rotation,
-                                                                 this.transform)).transform);
-        }
-    }
-
-    // Dequeue one brush from the inactive queue into the active List
-    // And place it according to the given uv coordinates
-    Transform InstantiateBrushFromPool ( Vector2 uvCoordinates )
-    {
-        // set brush position to clicked uv coordinates (uv = screen: top-left (0,1), top-right (1,1), bottom-left (0,0), bottom-right (1,0))
-        Vector3 brushPosition = renderCamera.ViewportToWorldPoint (new Vector3 (uvCoordinates.x, uvCoordinates.y, 0.9f));
-        Transform activatedBrush = null;
-
-        // Check Queue buffer
-        if ( inactiveBrushPool.Count == 0 )
-        {
-            // Instantiate a new brush (not that efficient)
-            activatedBrush = InstantiateBrushAtCoordinates (uvCoordinates);
-        }
-        else
-        {
-            // Get a brush Instance out of the pool and set its position
-            activatedBrush = inactiveBrushPool.Dequeue ();
-            activatedBrush.position = brushPosition;
-        }
-
-        // Mark the Instance active, scale it and recolor it, if the user is clicking on one spot repeatedly
-        activeBrushes.Add (activatedBrush);
-        determineBrushColor (activatedBrush, activeBrushes);
-        activatedBrush.localScale = new Vector3 (brushScale, brushScale, brushScale);
-
-        return activatedBrush;
-    }
-
-    // Dequeue one brush from the inactive queue, but don't put it into the active list,
-    // permanently place it at the given position instead
-    Transform RemoveBrushFromPool ( Vector3 brushPosition, Quaternion brushRotation )
-    {
-        Transform activatedBrush = null;
-
-        // Check Queue buffer
-        if ( inactiveBrushPool.Count == 0 )
-        {
-            // Instantiate a new brush (not that efficient)
-            activatedBrush = InstantiateBrushAtPosition (brushPosition, brushRotation);
-        }
-        else
-        {
-            // Get a brush Instance out of the pool and set its position
-            activatedBrush = inactiveBrushPool.Dequeue ();
-            activatedBrush.position = brushPosition;
-            activatedBrush.rotation = brushRotation;
-        }
-
-        // Do not mark the Instance active
-
-        // Recolor it, if the user is clicking on one spot repeatedly
-        List<Transform> taggedNodes = new List<Transform> ();
-        foreach ( GameObject gO in GameObject.FindGameObjectsWithTag ("Drawing") )
-            taggedNodes.Add (gO.GetComponent<Transform> ());
-
-        determineBrushColor (activatedBrush, taggedNodes);
-
-        return activatedBrush;
-    }
-
-    // Put all active brushes in the inactiveBrushPool Queue and clear the list of active brushes
-    void stowAllBrushesAway ()
-    {
-        foreach (Transform brush in activeBrushes)
-        {
-            brush.position = this.transform.position;
-            inactiveBrushPool.Enqueue (brush);
-        }
-        activeBrushes.Clear ();
     }
 
     // According to the proximity to placed brushes, recolor the newly placed brush
@@ -264,20 +189,4 @@ public class RenderDrawings : MonoBehaviour
         else brushColorScriptReference.TurnGreen ();
     }
 
-    // Slower than taking a brush from the pool: Instantiate a new copy
-    Transform InstantiateBrushAtCoordinates (Vector2 uvCoordinates)
-    {
-        // set brush position to clicked uv coordinates (uv = screen: top-left (0,1), top-right (1,1), bottom-left (0,0), bottom-right (1,0))
-        Vector3 brushPosition = renderCamera.ViewportToWorldPoint (new Vector3 (uvCoordinates.x, uvCoordinates.y, 0.9f));
-
-        // Instantiate a new brush Instance
-        return ((GameObject)Instantiate (brushObject, brushPosition, brushObject.transform.rotation, this.transform)).transform;
-    }
-
-    // Slower than taking a brush from the pool: Instantiate a new copy
-    Transform InstantiateBrushAtPosition ( Vector3 position, Quaternion orientation )
-    {
-        // Instantiate a new brush Instance
-        return ((GameObject)Instantiate (brushObject, position, orientation, this.transform)).transform;
-    }
 }
