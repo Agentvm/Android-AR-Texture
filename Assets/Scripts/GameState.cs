@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    Singleton that allows global information to be safely accessed.
+*/
 public class GameState : MonoBehaviour
 {
     // Static instance of GameState which allows it to be accessed by any other script.

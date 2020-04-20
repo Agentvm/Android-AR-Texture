@@ -4,6 +4,10 @@ using UnityEngine;
 using System;
 using UnityEngine.EventSystems;
 
+/*
+    Unifies Touch and Mouse Input in a wrapper class. Offers a touch event registration service
+    realised by a list of delegates that can be added to.
+*/
 public class InputModule : MonoBehaviour
 {
     // Static instance of InputModule which allows it to be accessed by any other script.
