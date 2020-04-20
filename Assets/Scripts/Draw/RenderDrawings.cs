@@ -47,14 +47,18 @@ public class RenderDrawings : MonoBehaviour
         // Register RenderBrushesOnTexture() to get executed every time something is touched
         InputModule.Instance.SubscribeToTouch (RenderBrushesOnTexture);
 
-        // Pre-scale the brushes and fill the brush pool with a number of newly instantiated brushes
-        brushObject.transform.localScale = new Vector3 (brushScale, brushScale, brushScale);
+        // Fill the brush pool with a number of newly instantiated brushes
         ReplenishBrushPool (50);
+
+        // Render one picture to set the RenderTexture content to empty
+        renderCamera.Render ();
     }
 
     // Called after this Camera has taken one image
     private void OnPostRender ()
     {
+        if ( !activeObjectRenderer ) return;
+
         // Disable/enable the additional texture showing the heatmap, depending on the global setting
         if ( GameState.Instance.HeatmapActive )
             activeObjectRenderer.material.EnableKeyword ("_DETAIL_MULX2");
@@ -184,9 +188,10 @@ public class RenderDrawings : MonoBehaviour
             activatedBrush.position = brushPosition;
         }
 
-        // Mark the Instance active and recolor it, if the user is clicking on one spot repeatedly
+        // Mark the Instance active, scale it and recolor it, if the user is clicking on one spot repeatedly
         activeBrushes.Add (activatedBrush);
         determineBrushColor (activatedBrush, activeBrushes);
+        activatedBrush.localScale = new Vector3 (brushScale, brushScale, brushScale);
 
         return activatedBrush;
     }

@@ -5,8 +5,10 @@
     Stop Recoloring of objects on first touch
     (Make brush scale with object size)
     Reduce Raycast max Lenght
+    Refactor RenderDrawings (seperate Script for brush placement in scene)
 
  Done:
+    Fix Brush Scaling
     Make Brushes more visible
     Block Raycasts when the UI was touched
     preload delete on update fix
