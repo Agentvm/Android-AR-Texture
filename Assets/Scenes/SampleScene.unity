@@ -1222,7 +1222,7 @@ PrefabInstance:
     - target: {fileID: 5914612074381576720, guid: 82124b79806f55d45a24a77596927e8b,
         type: 3}
       propertyPath: planeBrushScale
-      value: 0.25
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82124b79806f55d45a24a77596927e8b, type: 3}

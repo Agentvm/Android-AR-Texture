@@ -17,8 +17,6 @@ public class RenderDrawings : MonoBehaviour
     // Configuration
     [SerializeField][Range (0.1f, 3f)] float brushScale = 1.0f;
     [SerializeField][Range (0.1f, 3f)] float planeBrushScale = 0.2f;
-    Vector3 brushScaleVector;
-    Vector3 planeBrushScaleVector;
 
     // Active Object
     private Renderer activeObjectRenderer = null;
@@ -50,9 +48,7 @@ public class RenderDrawings : MonoBehaviour
         InputModule.Instance.SubscribeToTouch (RenderBrushesOnTexture);
 
         // Pre-scale the brushes and fill the brush pool with a number of newly instantiated brushes
-        brushScaleVector = new Vector3 (brushScale, brushScale, brushScale);
-        planeBrushScaleVector = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);
-        brushObject.transform.localScale = brushScaleVector;
+        brushObject.transform.localScale = new Vector3 (brushScale, brushScale, brushScale);
         ReplenishBrushPool (50);
     }
 
@@ -82,7 +78,7 @@ public class RenderDrawings : MonoBehaviour
             // Simply place a brush Instance on the plane
             Transform placedBrush = RemoveBrushFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
             placedBrush.tag = "Drawing";
-            placedBrush.localScale = planeBrushScaleVector;
+            placedBrush.localScale = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);
 
             // Hide, if heatmap is not shown
             if ( !GameState.Instance.HeatmapActive )
