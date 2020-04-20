@@ -9,7 +9,6 @@ public class ActiveInEditor : MonoBehaviour
     {
         this.gameObject.SetActive (false);
         #if UNITY_EDITOR
-            Debug.Log ("Unity Editor");
             this.gameObject.SetActive (true);
         #endif
     }

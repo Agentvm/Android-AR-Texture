@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 using UnityEngine.EventSystems;
 
 /*
@@ -192,7 +191,7 @@ public class InputModule : MonoBehaviour
         ray = mainCamera.ScreenPointToRay (screen_point);
 
         // check ray integrity and check if UI should block raycast
-        if ( !CheckRaycast (screen_point) || (EventSystem.current && EventSystem.current.IsPointerOverGameObject (fingerID)) )
+        if ( !CheckRaycast (screen_point) || IsPointerOverUIObject ())
             return raycastHit;
 
         // cast ray
@@ -218,16 +217,17 @@ public class InputModule : MonoBehaviour
     // Update the meshCollider mesh of the model hit, so the correct uv coordinate can be deduced (this is computation intensive)
     void recalculateCollisionMesh (SkinnedMeshRenderer skinnedMeshRenderer, MeshCollider meshCollider )
     {
-        //// slow, but correct? version
+        // Slow, but correct? version
         Mesh bakeMesh = new Mesh ();
         skinnedMeshRenderer.BakeMesh (bakeMesh);
         meshCollider.sharedMesh = bakeMesh;
 
+        // Fast Method that worked with DelayedRaycast Subroutine at one point but does not work currently
         // Bake the current status of the mesh directly into the collider mesh
         //meshCollider.sharedMesh = new Mesh ();
         //skinnedMeshRenderer.BakeMesh (meshCollider.sharedMesh);
 
-        //// Re-scale vertices
+        // Re-scale vertices (needed if object scale is not Vector3.one)
         //Vector3[] verts = meshCollider.sharedMesh.vertices;
         //float scale = 1.0f/skinnedMeshRenderer.transform.lossyScale.y;
         //for ( int i = 0; i < verts.Length; i += 1 )
@@ -269,6 +269,19 @@ public class InputModule : MonoBehaviour
 
         // Everything is fine
         return true;
+    }
+
+    // Method that tells wether the UI was clicked or not
+    // Source: https://answers.unity.com/questions/1073979/android-touches-pass-through-ui-elements.html
+    private bool IsPointerOverUIObject ()
+    {
+        if ( !EventSystem.current ) return false;
+
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2 (Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll (eventDataCurrentPosition, results);
+        return results.Count > 0;
     }
 
 }
