@@ -14,12 +14,18 @@ public class RenderDrawings : MonoBehaviour
     [SerializeField]private GameObject brushObject;
     private RenderTexture OriginalRenderTexture;
 
+    // Configuration
+    [SerializeField][Range (0.1f, 3f)] float brushScale = 1.0f;
+    [SerializeField][Range (0.1f, 3f)] float planeBrushScale = 0.2f;
+    Vector3 brushScaleVector;
+    Vector3 planeBrushScaleVector;
+
     // Active Object
     private Renderer activeObjectRenderer = null;
     Transform lastActiveObject = null; // remember the last object painted on
 
     // Saved Brush Positions
-    Dictionary<Transform, HeatmapConfiguration> HeatmapConfigurations = new Dictionary<Transform,HeatmapConfiguration> ();
+    Dictionary<Transform, HeatmapConfiguration> HeatmapConfigurations = new Dictionary<Transform, HeatmapConfiguration> ();
 
     // Brush Color
     int tapQuantityTreshold = 2;
@@ -43,7 +49,10 @@ public class RenderDrawings : MonoBehaviour
         // Register RenderBrushesOnTexture() to get executed every time something is touched
         InputModule.Instance.SubscribeToTouch (RenderBrushesOnTexture);
 
-        // Fill brush pool with a number of newly instantiated brushes
+        // Pre-scale the brushes and fill the brush pool with a number of newly instantiated brushes
+        brushScaleVector = new Vector3 (brushScale, brushScale, brushScale);
+        planeBrushScaleVector = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);
+        brushObject.transform.localScale = brushScaleVector;
         ReplenishBrushPool (50);
     }
 
@@ -73,6 +82,7 @@ public class RenderDrawings : MonoBehaviour
             // Simply place a brush Instance on the plane
             Transform placedBrush = RemoveBrushFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
             placedBrush.tag = "Drawing";
+            placedBrush.localScale = planeBrushScaleVector;
 
             // Hide, if heatmap is not shown
             if ( !GameState.Instance.HeatmapActive )

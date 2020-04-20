@@ -1214,6 +1214,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Brush Render Camera
       objectReference: {fileID: 0}
+    - target: {fileID: 5914612074381576720, guid: 82124b79806f55d45a24a77596927e8b,
+        type: 3}
+      propertyPath: brushScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5914612074381576720, guid: 82124b79806f55d45a24a77596927e8b,
+        type: 3}
+      propertyPath: planeBrushScale
+      value: 0.25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82124b79806f55d45a24a77596927e8b, type: 3}
 --- !u!1 &1510056608
@@ -1228,13 +1238,14 @@ GameObject:
   - component: {fileID: 1510056612}
   - component: {fileID: 1510056611}
   - component: {fileID: 1510056610}
+  - component: {fileID: 1510056613}
   m_Layer: 0
   m_Name: PC Debug Plane
   m_TagString: Plane
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1510056609
 Transform:
   m_ObjectHideFlags: 0
@@ -1310,6 +1321,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1510056608}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1510056613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510056608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6def655e6de71ea46bb25dabd518f0e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1821028289
 GameObject:
   m_ObjectHideFlags: 0
