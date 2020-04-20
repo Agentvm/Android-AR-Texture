@@ -76,6 +76,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   heatmapActive: 0
   placementActive: 1
+  placementForbidden: 0
+  maxPlacedObjects: 4
+  placementButtonReference: {fileID: 0}
 --- !u!114 &9199232667147886603
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,7 +86,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9199232669057084023}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd5d30b8981e87342bff3e39bd20d23b, type: 3}
   m_Name: 

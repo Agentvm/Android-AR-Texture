@@ -89,3 +89,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   brushObject: {fileID: 1979190293809728641, guid: 4ece760bd0e8f34479404215887be541,
     type: 3}
+  brushScale: 0.42
+  planeBrushScale: 0.1
+  tapQuantityTreshold: 2
+  tapDistanceTreshold: 0.8
