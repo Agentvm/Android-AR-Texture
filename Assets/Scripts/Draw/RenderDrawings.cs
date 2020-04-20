@@ -15,19 +15,21 @@ public class RenderDrawings : MonoBehaviour
     private RenderTexture OriginalRenderTexture;
 
     // Configuration
+    [Tooltip("Scale for brushes rendered on non-planar Objects via RenderTexture")]
     [SerializeField][Range (0.1f, 3f)] float brushScale = 1.0f;
+    [Tooltip("Scale for brushes placed on planes in the enviroment")]
     [SerializeField][Range (0.1f, 3f)] float planeBrushScale = 0.2f;
+    [Tooltip("Number of taps that have to be near a newly placed one for it to be recolored")]
+    [SerializeField]int tapQuantityTreshold = 2;
+    [Tooltip("If other taps are within this distance to a newly placed one, they count towards the tapQuantityTreshold")]
+    [SerializeField][Range (0.1f, 2f)]float tapDistanceTreshold = 1f;
 
     // Active Object
     private Renderer activeObjectRenderer = null;
     Transform lastActiveObject = null; // remember the last object painted on
 
     // Saved Brush Positions
-    Dictionary<Transform, HeatmapConfiguration> HeatmapConfigurations = new Dictionary<Transform, HeatmapConfiguration> ();
-
-    // Brush Color
-    int tapQuantityTreshold = 2;
-    float tapDistanceTreshold = 1f;
+    Dictionary<Transform, HeatmapConfiguration> HeatmapConfigurations = new Dictionary<Transform, HeatmapConfiguration> ();    
 
     // Pooling mechanism instead of constantly enabling and disabling objects
     Queue<Transform> inactiveBrushPool = new Queue<Transform> ();
@@ -251,7 +253,7 @@ public class RenderDrawings : MonoBehaviour
             // Compute vector diff
             Vector3 vectorDifference = (brush.position - activeBrushTransform.position);
 
-            // Determine touch distance by using magnitude (is this subject to camera scale? How do I scale this?)
+            // Determine touch distance by using magnitude (is this subject to camera scale?)
             if ( vectorDifference.magnitude < tapDistanceTreshold )
                 neighborsInThreshold++;
         }

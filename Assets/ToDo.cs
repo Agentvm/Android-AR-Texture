@@ -2,7 +2,6 @@
  * 
 
  ToDo:
-    Stop Recoloring of objects on first touch
     (Make brush scale with object size)
     Reduce Raycast max Lenght
     Refactor RenderDrawings (seperate Script for brush placement in scene)
