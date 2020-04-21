@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEditor;
 
 /*
-    Places Brush Prefabs (specks of color) in the scene for display and in front of the render camera,
-    to render them into object textures
+    Places Brush Prefabs (specks of color) in the scene for display
+    and in front of the render camera to render them into object textures
 */
 public class RenderDrawings : MonoBehaviour
 {

@@ -2,7 +2,11 @@
  * 
 
  ToDo:
-    Plane Brush performance
+    UI toggle
+    Lighting (unlit/emission + more brightness)
+    Static People, oh so static :(
+    Plane Brush performance (Quad, alpha)
+    Reference Points
     (Make brush scale with object size)
     Reduce Raycast max Lenght
 

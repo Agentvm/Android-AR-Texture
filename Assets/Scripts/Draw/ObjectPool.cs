@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+    Creates a pool of Instances from a given prefab and re-places them at runtime
+*/
 public class ObjectPool : MonoBehaviour
 {
     // The object that the pool consists of
