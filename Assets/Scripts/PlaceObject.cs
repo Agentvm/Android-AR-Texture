@@ -12,7 +12,7 @@ public class PlaceObject : MonoBehaviour
     private Camera mainCamera;
 
     // Objects
-    [SerializeField] private Object[] objectsToInstantiate;
+    [SerializeField] private GameObject[] objectsToInstantiate;
 
     // Start is called before the first frame update
     void Start()
@@ -23,7 +23,7 @@ public class PlaceObject : MonoBehaviour
 
         // Quickly load and then destroy all prefabs so the screen does not freeze on first placement
         List<GameObject> preloadedObjects = new List<GameObject> ();
-        foreach (Object objectToInstantiate in objectsToInstantiate)
+        foreach (GameObject objectToInstantiate in objectsToInstantiate)
         {
             preloadedObjects.Add ((GameObject)Instantiate (objectToInstantiate, new Vector3 (0f, 0f, 20f), Quaternion.identity, this.transform ));
         }
@@ -58,7 +58,7 @@ public class PlaceObject : MonoBehaviour
              objectsToInstantiate.Length == 0 || raycastHit.transform.tag != "Plane" ) return;
 
         // Get Raycast info and randomly choose an object to deploy
-        Object objectToInstantiate = objectsToInstantiate[Random.Range (0, objectsToInstantiate.Length)];
+        GameObject objectToInstantiate = objectsToInstantiate[Random.Range (0, objectsToInstantiate.Length)];
         Transform touchedObjectTransform = raycastHit.transform;
         Vector3 touchPosition = raycastHit.point;
 
@@ -76,5 +76,9 @@ public class PlaceObject : MonoBehaviour
 
         float heightDifference = mainCamera.transform.position.y - instantiatedObject.position.y;
         instantiatedObject.LookAt (mainCamera.transform.position - Vector3.up * heightDifference);
+
+        // Quickfix for faulty Models
+        if ( objectToInstantiate.transform.rotation.x != 0f)
+            instantiatedObject.transform.Rotate (-90f, 0, 0);
     }
 }
