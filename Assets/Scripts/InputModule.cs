@@ -13,8 +13,14 @@ public class InputModule : MonoBehaviour
     private static InputModule instance = null;
 
     // Delegate for Touch Events
-    public delegate void TouchDelegate (RaycastHit rayCastHit );
+    // If a short tap is registered, these functions are called
+    public delegate void TouchDelegate ( RaycastHit rayCastHit );
     private List<TouchDelegate> functionsExectuedOnTouch = new List<TouchDelegate> ();
+
+    //// While a swipe is acive, these functions are called
+    //public delegate void SwipeDelegate ( Vector3 startPosition, Vector3 currentPosition, bool swipeEnded );
+    //private List<SwipeDelegate> functionsExectuedOnSwipe = new List<SwipeDelegate> ();
+    //bool swipeActive = false;
 
     // Input Variables 
     private bool touchInputActive = false;
@@ -67,7 +73,7 @@ public class InputModule : MonoBehaviour
     void Update()
     {
         // Touch input
-        if ( Input.touchCount > 0 )
+        if ( Input.touchCount > 0 /*InputHelper.GetTouches ().Count > 0*/ )
         {
             // Get touch information
             touchInputActive = true;
@@ -86,13 +92,19 @@ public class InputModule : MonoBehaviour
     }
 
     // Takes a function and adds it to the list of functions that gets executed every time a touch is registered
-    public void SubscribeToTouch (TouchDelegate callbackFunction )
+    public void SubscribeToTouch ( TouchDelegate callbackFunction )
     {
         functionsExectuedOnTouch.Add (callbackFunction);
     }
 
+    //// Takes a function and adds it to the list of functions that gets executed every time a swipe is registered
+    //public void SubscribeToSwipe ( SwipeDelegate callbackFunction )
+    //{
+    //    functionsExectuedOnSwipe.Add (callbackFunction);
+    //}
+
     // execute all functions that subscribe to a touch
-    void executeCallbackFunctions (RaycastHit raycastHit )
+    void executeTouchCallbackFunctions ( RaycastHit raycastHit )
     {
         if ( functionsExectuedOnTouch.Count == 0 ) return;
 
@@ -104,13 +116,26 @@ public class InputModule : MonoBehaviour
         }
     }
 
+    //// execute all functions that subscribe to a swipe
+    //void executeSwipeCallbackFunctions ( Vector3 startPosition, Vector3 endPosition, bool swipeEnded )
+    //{
+    //    if ( functionsExectuedOnSwipe.Count == 0 ) return;
+
+    //    // Iterate through all functions stored
+    //    foreach ( SwipeDelegate delegateFunction in functionsExectuedOnSwipe )
+    //    {
+    //        // Execute the stored function
+    //        delegateFunction (startPosition, endPosition, swipeEnded);
+    //    }
+    //}
+
     // Handle touch input
     void touchAndTouch ()
     {
         List<int> currentTouchIds = new List<int> ();
 
         // Iterate through all touches
-        foreach (Touch touch in Input.touches/*InputHelper.GetTouches ()*/ )
+        foreach (Touch touch in Input.touches /*InputHelper.GetTouches ()*/ )
         {
             currentTouchIds.Add (touch.fingerId);
 
@@ -121,19 +146,35 @@ public class InputModule : MonoBehaviour
                 // On first sensing the touch
                 if ( touch.phase == TouchPhase.Began )
                     touchStartPosition = touch.position;
-
+                //// When moving the finger
+                //else if (touch.phase == TouchPhase.Moved)
+                //{
+                //    // Notify all subscribers about the swipe movement
+                //    if ( (touchStartPosition - touch.position).magnitude < tapThreshold )
+                //    {
+                //        executeSwipeCallbackFunctions (touchStartPosition, touch.position, false);
+                //        swipeActive = true;
+                //    }
+                //}
                 // When the touch contact is ending
                 else if ( touch.phase == TouchPhase.Ended )
                 {
+                    //// End swipe movement
+                    //if (swipeActive)
+                    //{
+                    //    executeSwipeCallbackFunctions (touchStartPosition, touch.position, true);
+                    //    swipeActive = false;
+                    //}
+
                     // Check if tapped
                     if ( (touchStartPosition - touch.position).magnitude < tapThreshold )
                     {
                         // Shoot a ray from the camera through the mouse position into the scene and store the hit info
-                        RaycastHit raycastHit = Raycast (touch.position, touch.fingerId);
+                        RaycastHit raycastHit = Raycast (touch.position);
 
                         // call all functions that subscribed to the touch
                         if ( raycastHit.transform )
-                            executeCallbackFunctions (raycastHit);
+                            executeTouchCallbackFunctions (raycastHit);
                     }
 
                     // At the end of touch, remove it's ID from the list of known ID's
@@ -166,6 +207,7 @@ public class InputModule : MonoBehaviour
 
     }
 
+    // Handle point and click Input
     // Use the mouse to test in Editor
     void mousePointAndClick ()
     {
@@ -179,12 +221,12 @@ public class InputModule : MonoBehaviour
 
             // call all functions that subscribed to the touch
             if ( raycastHit.transform )
-                executeCallbackFunctions (raycastHit );
+                executeTouchCallbackFunctions (raycastHit );
         }
     }
 
     // Do a raycast from the main camera to the specified position, set the mouse position and return the object hit
-    RaycastHit Raycast ( Vector3 screen_point, int fingerID = -1 )
+    RaycastHit Raycast ( Vector3 screen_point )
     {
         // prepare raycast
         RaycastHit raycastHit = new RaycastHit ();
@@ -197,7 +239,7 @@ public class InputModule : MonoBehaviour
         // cast ray
         Physics.Raycast (ray, out raycastHit);
 
-        // If a model containing a skinned SkinnedMeshRenderer was hit, update the MeshCollider and cast another ray to get the right uv coordinates
+        // If a model containing a SkinnedMeshRenderer was hit, update the MeshCollider and cast another ray to get the updated uv coordinates
         if ( raycastHit.transform && raycastHit.transform.GetComponent<SkinnedMeshRenderer> () && raycastHit.transform.GetComponent<MeshCollider> () )
         {
             recalculateCollisionMesh (  raycastHit.transform.GetComponent<SkinnedMeshRenderer> (),
@@ -205,10 +247,6 @@ public class InputModule : MonoBehaviour
 
             // raycast again
             Physics.Raycast (ray, out raycastHit);
-
-            // Nullify Raycast and try again at end of frame, as the mesh has changed
-            //StartCoroutine (DelayedRaycast (ray));
-            //raycastHit = new RaycastHit ();
         }
 
         return raycastHit;
@@ -221,32 +259,6 @@ public class InputModule : MonoBehaviour
         Mesh bakeMesh = new Mesh ();
         skinnedMeshRenderer.BakeMesh (bakeMesh);
         meshCollider.sharedMesh = bakeMesh;
-
-        // Fast Method that worked with DelayedRaycast Subroutine at one point but does not work currently
-        // Bake the current status of the mesh directly into the collider mesh
-        //meshCollider.sharedMesh = new Mesh ();
-        //skinnedMeshRenderer.BakeMesh (meshCollider.sharedMesh);
-
-        // Re-scale vertices (needed if object scale is not Vector3.one)
-        //Vector3[] verts = meshCollider.sharedMesh.vertices;
-        //float scale = 1.0f/skinnedMeshRenderer.transform.lossyScale.y;
-        //for ( int i = 0; i < verts.Length; i += 1 )
-        //    verts[i] = verts[i] * scale;
-        //meshCollider.sharedMesh.vertices = verts;
-    }
-
-    // Do a raycast at the end of frame and if it succeeds, call all subscribed functions
-    IEnumerator DelayedRaycast ( Ray ray )
-    {
-        yield return new WaitForEndOfFrame ();
-
-        // Delayed until Frame end (otherwise the newly baked collision mesh ignores raycasts)
-        RaycastHit raycastHit = new RaycastHit ();
-        Physics.Raycast (ray, out raycastHit);
-
-        // Call all functions that subscribed to the touch
-        if ( raycastHit.transform )
-            executeCallbackFunctions (raycastHit);
     }
 
     // validates Raycast point
