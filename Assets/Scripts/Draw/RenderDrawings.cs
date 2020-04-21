@@ -15,9 +15,9 @@ public class RenderDrawings : MonoBehaviour
 
     // Configuration
     [Tooltip("Scale for brushes rendered on non-planar Objects via RenderTexture")]
-    [SerializeField][Range (0.1f, 3f)] float brushScale = 1.0f;
+    [SerializeField][Range (1f, 12f)] float brushScale = 1.0f;
     [Tooltip("Scale for brushes placed on planes in the enviroment")]
-    [SerializeField][Range (0.1f, 3f)] float planeBrushScale = 0.2f;
+    [SerializeField][Range (1f, 12f)] float planeBrushScale = 0.2f;
     [Tooltip("Number of taps that have to be near a newly placed one for it to be recolored")]
     [SerializeField]int tapQuantityTreshold = 2;
     [Tooltip("If other taps are within this distance to a newly placed one, they count towards the tapQuantityTreshold")]
@@ -74,8 +74,13 @@ public class RenderDrawings : MonoBehaviour
         // Check what kind of object was hit
         if ( hitObjectTransform.tag == "Plane" )
         {
+            // Quad rotation offset
+            Quaternion rotationOffset = new Quaternion ();
+            rotationOffset.eulerAngles = new Vector3 (90, 0, 0);
+
             // Simply place a brush Instance on the plane
-            Transform placedBrush = brushPool.RemoveElementFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f), hitObjectTransform.rotation);
+            Transform placedBrush = brushPool.RemoveElementFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f),
+                                                                     hitObjectTransform.rotation * rotationOffset);
             placedBrush.tag = "Drawing";
             placedBrush.localScale = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);
             placedBrush.GetComponent<BrushColor> ().ResetPlacementTime ();

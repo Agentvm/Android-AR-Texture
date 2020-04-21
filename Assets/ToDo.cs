@@ -2,15 +2,16 @@
  * 
 
  ToDo:
-    UI toggle
     Lighting (unlit/emission + more brightness)
-    Static People, oh so static :(
-    Plane Brush performance (Quad, alpha)
+    Plane Brush performance (alpha)
     Reference Points
     (Make brush scale with object size)
     Reduce Raycast max Lenght
 
  Done:
+    Plane Brush performance (Quad)
+    Static People, oh so static :(
+    UI toggle
     Refactor RenderDrawings (seperate Script for brush placement in scene)
     Fix Brush Scaling
     Make Brushes more visible
