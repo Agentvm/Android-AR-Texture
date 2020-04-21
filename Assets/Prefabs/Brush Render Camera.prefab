@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1885298121164131298}
   - component: {fileID: 1885298121164131299}
   - component: {fileID: 5914612074381576720}
+  - component: {fileID: 400388583}
   m_Layer: 0
   m_Name: Brush Render Camera
   m_TagString: Untagged
@@ -42,7 +43,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -87,9 +88,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 61ef24e877ea14e4682c79c493bd684a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brushObject: {fileID: 1979190293809728641, guid: 4ece760bd0e8f34479404215887be541,
-    type: 3}
   brushScale: 0.42
   planeBrushScale: 0.1
   tapQuantityTreshold: 2
   tapDistanceTreshold: 0.8
+--- !u!114 &400388583
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1885298121164131301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 482f9054b5265e146a4e0ee142437cac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pooledObject: {fileID: 1979190293809728641, guid: 4ece760bd0e8f34479404215887be541,
+    type: 3}
