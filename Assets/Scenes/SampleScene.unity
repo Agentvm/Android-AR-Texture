@@ -512,7 +512,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 0.8
+  m_Intensity: 0.6
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -741,7 +741,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
-  m_Intensity: 1.5
+  m_Intensity: 1.25
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -1101,7 +1101,7 @@ PrefabInstance:
     - target: {fileID: 5914612074381576720, guid: 82124b79806f55d45a24a77596927e8b,
         type: 3}
       propertyPath: tapDistanceTreshold
-      value: 0.5
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5914612074381576720, guid: 82124b79806f55d45a24a77596927e8b,
         type: 3}
@@ -1437,7 +1437,7 @@ PrefabInstance:
     - target: {fileID: 9199232667147886599, guid: 5e415a5c1e150a74aabba08506354013,
         type: 3}
       propertyPath: maxPlacedObjects
-      value: 8
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 9199232669057084016, guid: 5e415a5c1e150a74aabba08506354013,
         type: 3}
