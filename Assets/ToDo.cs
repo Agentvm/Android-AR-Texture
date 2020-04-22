@@ -1,13 +1,12 @@
 ﻿/*
- * 
 
  ToDo:
-    Lizenz
     Reference Points
     (Make brush scale with object size)
     Reduce Raycast max Lenght
 
  Done:
+    Lizenz
     Disable Plane Visibility
     Fix static models
     Brighten up the Scene
@@ -28,5 +27,5 @@
 Ideas:
     Performance+: Make brushes children of the plane they're sticking to, so you can loop through the children instead of getting all
                   GameObjects tagged "Drawing" every time you place and re-color a brush.
- * 
- * */
+
+*/
