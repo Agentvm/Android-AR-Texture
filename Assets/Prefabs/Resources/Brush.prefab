@@ -93,5 +93,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   greenBrushMaterial: {fileID: 2100000, guid: 51461677d61542a4db25b0aea340f898, type: 2}
-  yellowBrushMaterial: {fileID: 2100000, guid: 96ee776f89f80cc489f3c259602a2281, type: 2}
-  redBrushMaterial: {fileID: 2100000, guid: 07074d18c2e14e045926bb9ac1fdd6c1, type: 2}
+  yellowBrushMaterial: {fileID: 2100000, guid: c0249b63cfa49c74f8132f1ddf9d275d, type: 2}
+  redBrushMaterial: {fileID: 2100000, guid: 0a8816ed391871647ae4ff0b720aed1e, type: 2}
