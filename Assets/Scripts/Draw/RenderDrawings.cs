@@ -81,16 +81,16 @@ public class RenderDrawings : MonoBehaviour
             // Simply place a brush Instance on the plane
             Transform placedBrush = brushPool.RemoveElementFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f),
                                                                      hitObjectTransform.rotation * rotationOffset);
-            placedBrush.tag = "Drawing";
+            placedBrush.tag = "Drawing"; // this differentiates plane-placed brushes from RenderTexture brushes
             placedBrush.localScale = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);
             placedBrush.GetComponent<BrushColor> ().ResetPlacementTime ();
 
-            // Change brush color
+            // Change brush color (this get increasingly inefficient!)
             List<Transform> taggedNodes = new List<Transform> ();
             foreach ( GameObject gO in GameObject.FindGameObjectsWithTag ("Drawing") )
                 taggedNodes.Add (gO.GetComponent<Transform> ());
 
-            determineBrushColor (placedBrush, taggedNodes, true);
+            determineBrushColor (placedBrush, taggedNodes, true, false);
 
             // Hide, if heatmap is not shown
             if ( !GameState.Instance.HeatmapActive )
@@ -172,7 +172,7 @@ public class RenderDrawings : MonoBehaviour
     }
 
     // According to the proximity to placed brushes, recolor the newly placed brush
-    void determineBrushColor (Transform brush, List<Transform> nearbyBrushes, bool removeUnderlyingBrushes = false)
+    void determineBrushColor ( Transform brush, List<Transform> nearbyBrushes, bool removeUnderlyingBrushes = false, bool elevateColoredBrushes = true)
     {
         // Color Change Variables
         BrushColor brushColorScriptReference = brush.GetComponent<BrushColor> ();
@@ -214,11 +214,22 @@ public class RenderDrawings : MonoBehaviour
         {
             brushColorScriptReference.TurnRed ();
 
+            // Elevate the brush, so it is more visible than the green or yellow colored ones
+            if ( elevateColoredBrushes )
+                brush.Translate (new Vector3 (0f, 0f, -0.02f));
+
             // Remove oldest brush, it probably isn't even visible anymore
             if ( removeUnderlyingBrushes && oldestBrush )
                 Destroy (oldestBrush.gameObject);
         }
-        else if (neighborsInThreshold >= tapQuantityTreshold ) brushColorScriptReference.TurnYellow ();
+        else if ( neighborsInThreshold >= tapQuantityTreshold )
+        {
+            brushColorScriptReference.TurnYellow ();
+
+            // Elevate the brush, so it is more visible than the green colored ones
+            if ( elevateColoredBrushes )
+                brush.Translate (new Vector3 (0f, 0f, -0.01f));
+        }
         else brushColorScriptReference.TurnGreen ();
     }
 
