@@ -2,13 +2,15 @@
  * 
 
  ToDo:
-    Brighten up the Scene
-    Plane Brush performance (alpha)
+    Disable Plane Visibility
     Reference Points
     (Make brush scale with object size)
     Reduce Raycast max Lenght
 
  Done:
+    Fix static models
+    Brighten up the Scene
+    Plane Brush performance (alpha)
     Brush Lighting (unlit/emission)
     Plane Brush performance (Quad)
     Static People, oh so static :(
