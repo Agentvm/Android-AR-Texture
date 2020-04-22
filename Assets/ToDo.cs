@@ -2,12 +2,13 @@
  * 
 
  ToDo:
-    Disable Plane Visibility
+    Lizenz
     Reference Points
     (Make brush scale with object size)
     Reduce Raycast max Lenght
 
  Done:
+    Disable Plane Visibility
     Fix static models
     Brighten up the Scene
     Plane Brush performance (alpha)

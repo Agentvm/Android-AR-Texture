@@ -79,7 +79,7 @@ public class RenderDrawings : MonoBehaviour
             rotationOffset.eulerAngles = new Vector3 (90, 0, 0);
 
             // Simply place a brush Instance on the plane
-            Transform placedBrush = brushPool.RemoveElementFromPool (raycastHit.point + new Vector3 (0f, 0.1f, 0f),
+            Transform placedBrush = brushPool.RemoveElementFromPool (raycastHit.point + new Vector3 (0f, 0.01f, 0f),
                                                                      hitObjectTransform.rotation * rotationOffset);
             placedBrush.tag = "Drawing"; // this differentiates plane-placed brushes from RenderTexture brushes
             placedBrush.localScale = new Vector3 (planeBrushScale, planeBrushScale, planeBrushScale);

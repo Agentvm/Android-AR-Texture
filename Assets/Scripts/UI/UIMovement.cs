@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class UIMovement : MonoBehaviour
 {
-    // Components
-    RectTransform rectTransform;
+    // Reference
+    [SerializeField]TogglePlanes togglePlanesReference;
 
     // Configuration
     [SerializeField] float panelShowDuration = 3f;
@@ -30,8 +30,7 @@ public class UIMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        rectTransform = this.GetComponent<RectTransform> ();
-
+        // Define Panel locations
         activePosition = this.transform.position;
         disabledPosition = activePosition - new Vector3 (0f, 360f, 0); // should be height
 
@@ -55,17 +54,25 @@ public class UIMovement : MonoBehaviour
         // Slowly return Panel to active or inactive State
         if ( panelActive && this.transform.position != activePosition )
         {
+            // Activate Panel
             changedPosition = this.transform.position;
             changedPosition.y = Mathf.SmoothDamp (this.transform.position.y, activePosition.y, ref dampingVariable,
                           (1/panelReturnSpeed) * Time.deltaTime);
             this.transform.position = changedPosition;
+
+            // Set Planes on
+            togglePlanesReference.SetAllPlanesActive (true);
         }
         else if ( !panelActive && this.transform.position != disabledPosition )
         {
+            // Hide Panel
             changedPosition = this.transform.position;
             changedPosition.y = Mathf.SmoothDamp (this.transform.position.y, disabledPosition.y, ref dampingVariable,
                           (1/panelReturnSpeed) * Time.deltaTime);
             this.transform.position = changedPosition;
+
+            // Set Planes off
+            togglePlanesReference.SetAllPlanesActive (false);
         }
 
         //if (swipeActive)

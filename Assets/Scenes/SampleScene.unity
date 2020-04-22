@@ -1229,6 +1229,7 @@ GameObject:
   - component: {fileID: 1821028290}
   - component: {fileID: 1821028293}
   - component: {fileID: 1821028292}
+  - component: {fileID: 1821028294}
   m_Layer: 0
   m_Name: AR Session Origin
   m_TagString: Untagged
@@ -1291,6 +1292,18 @@ MonoBehaviour:
   m_PlanePrefab: {fileID: 5062260405259660610, guid: d3da0a618e0627e4cb91a6abaaa20650,
     type: 3}
   m_DetectionMode: -1
+--- !u!114 &1821028294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1821028289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebf36ec96e7f84649a3fe3d2e2ab3e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2085583915 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3095641827226749945, guid: f320fdf9498693f4b95a86137a5e22bb,
@@ -1315,6 +1328,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Runtime Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 3095641827786481593, guid: f320fdf9498693f4b95a86137a5e22bb,
+        type: 3}
+      propertyPath: panelShowDuration
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 3095641827786481593, guid: f320fdf9498693f4b95a86137a5e22bb,
+        type: 3}
+      propertyPath: togglePlanesReference
+      value: 
+      objectReference: {fileID: 1821028294}
     - target: {fileID: 3095641827786481594, guid: f320fdf9498693f4b95a86137a5e22bb,
         type: 3}
       propertyPath: m_LocalPosition.x
